@@ -1,3 +1,4 @@
+import Footer from '@/src/components/Common/layout/Footer';
 import { useRouter } from 'expo-router';
 import { ArrowUpCircle, Calendar, CheckCircle, Info } from 'lucide-react-native';
 import React, { useState } from 'react';
@@ -318,6 +319,9 @@ export default function HealthScorePage() {
           </View>
         )}
       </ScrollView>
+      <Footer />
+      
+      {/* Info Box */}
     </View>
   );
 }

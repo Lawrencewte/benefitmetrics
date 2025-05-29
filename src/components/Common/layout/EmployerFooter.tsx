@@ -2,10 +2,11 @@
 import { usePathname, useRouter } from 'expo-router';
 import {
   BarChart3,
-  MessageSquare,
+  Bell,
+  LayoutDashboard, // New dashboard icon
   MoreHorizontal,
   Target
-} from 'lucide-react';
+} from 'lucide-react-native';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -17,14 +18,14 @@ const EmployerFooter = () => {
     {
       id: 'dashboard',
       label: 'Dashboard',
-      icon: BarChart3,
+      icon: LayoutDashboard, // Changed from BarChart3 to LayoutDashboard
       route: '/employer',
       activeRoutes: ['/employer/dashboard', '/employer/']
     },
     {
       id: 'analytics',
       label: 'Analytics',
-      icon: BarChart3,
+      icon: BarChart3, // Keep BarChart3 for Analytics
       route: '/employer/analytics',
       activeRoutes: ['/employer/analytics']
     },
@@ -37,8 +38,8 @@ const EmployerFooter = () => {
     },
     {
       id: 'communications',
-      label: 'Communications',
-      icon: MessageSquare,
+      label: 'Alerts',
+      icon: Bell, // Using Bell for Alerts
       route: '/employer/communications',
       activeRoutes: ['/employer/communications']
     },
@@ -60,11 +61,10 @@ const EmployerFooter = () => {
   };
 
   const isTabActive = (tab: FooterTab) => {
-    // Check if current pathname starts with any of the tab's active routes
     return tab.activeRoutes.some(route => pathname.startsWith(route));
   };
 
-  const handleTabPress = (route) => {
+  const handleTabPress = (route: string) => {
     router.push(route);
   };
 
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   activeTabLabel: {
-    color: '#8b5cf6', // Purple color to match employer theme
+    color: '#8b5cf6',
   },
   inactiveTabLabel: {
     color: '#6b7280',

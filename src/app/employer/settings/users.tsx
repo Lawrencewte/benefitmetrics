@@ -1,18 +1,21 @@
+import EmployerFooter from '@/src/components/Common/layout/EmployerFooter';
 import {
-    AlertTriangle,
-    Clock,
-    Edit3,
-    Filter,
-    Mail,
-    Search,
-    Shield,
-    Trash2,
-    UserPlus,
-    Users,
-    X
+  AlertTriangle,
+  Clock,
+  Edit3,
+  Filter,
+  Mail,
+  Search,
+  Shield,
+  Trash2,
+  UserPlus,
+  Users,
+  X
 } from 'lucide-react-native';
 import { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+
+
 
 interface User {
   id: string;
@@ -579,6 +582,7 @@ export default function UserManagement() {
           </View>
         </View>
       )}
+      <EmployerFooter />
     </View>
   );
 }

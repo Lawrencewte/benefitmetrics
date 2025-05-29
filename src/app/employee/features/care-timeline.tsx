@@ -1,616 +1,775 @@
-import { AlertCircle, ArrowRight, Calendar, CheckCircle, Clock, Sparkles } from 'lucide-react-native';
-import { useState } from 'react';
+import { router } from 'expo-router';
+import {
+  AlertCircle,
+  ArrowRight,
+  Calendar,
+  CheckCircle,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  Info,
+  MapPin
+} from 'lucide-react-native';
+import React, { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import Footer from '../../../components/Common/layout/Footer';
+import Header from '../../../components/Common/layout/Header';
 
-interface TimelineItem {
-  id: string;
-  title: string;
-  description: string;
-  status: 'completed' | 'upcoming' | 'overdue';
-  dueDate: string;
-  provider?: string;
-  benefits?: string;
-}
-
-interface NextBestAction {
-  title: string;
-  description: string;
-  healthScoreImpact: number;
-}
-
-interface OptimizationSuggestions {
-  message: string;
-}
-
-export default function CareTimelinePage() {
-  const [selectedFilter, setSelectedFilter] = useState<'all' | 'upcoming' | 'overdue'>('all');
-
-  // Mock data to prevent undefined errors
-  const timelineData: TimelineItem[] = [
+const CareCoordinationTimeline = () => {
+  const [currentMonth, setCurrentMonth] = useState(4); // May (0-indexed)
+  const [expanded, setExpanded] = useState(null);
+  
+  const months = [
+    'January', 'February', 'March', 'April', 
+    'May', 'June', 'July', 'August', 
+    'September', 'October', 'November', 'December'
+  ];
+  
+  const recommendations = [
     {
-      id: '1',
-      title: 'Annual Physical Exam',
-      description: 'Comprehensive health checkup including blood work',
-      status: 'upcoming',
-      dueDate: 'June 15, 2025',
-      provider: 'Dr. Martinez',
-      benefits: 'Covered 100% by your health plan'
+      id: 1,
+      type: "Annual Physical",
+      recommendedDate: "May 28, 2025",
+      recommendedTime: "10:30 AM",
+      provider: "Dr. Martinez",
+      location: "HealthFirst Medical",
+      priority: "High",
+      status: "Scheduled",
+      reason: "Yearly wellness check required by insurance",
+      preparationSteps: [
+        "Fast for 8 hours before appointment",
+        "Bring current medication list",
+        "Wear comfortable clothing"
+      ],
+      conflictResolution: null,
+      workConflict: false,
+      benefitDeadline: "June 30, 2025",
+      workImpact: "Low (30 minutes PTO)"
     },
     {
-      id: '2',
-      title: 'Dental Cleaning',
-      description: 'Routine dental cleaning and oral health check',
-      status: 'completed',
-      dueDate: 'May 1, 2025',
-      provider: 'Dr. Wong',
-      benefits: 'Covered 100% by your dental plan'
+      id: 2,
+      type: "Dental Cleaning",
+      recommendedDate: "June 15, 2025",
+      recommendedTime: "2:00 PM",
+      provider: "Dr. Wong",
+      location: "Bright Smile Dental",
+      priority: "Medium",
+      status: "Pending Confirmation",
+      reason: "Bi-annual preventative dental care",
+      preparationSteps: [
+        "Brush and floss before appointment"
+      ],
+      conflictResolution: null,
+      workConflict: false,
+      benefitDeadline: "December 31, 2025",
+      workImpact: "Low (1 hour PTO)"
     },
     {
-      id: '3',
-      title: 'Eye Exam',
-      description: 'Annual vision screening and eye health assessment',
-      status: 'overdue',
-      dueDate: 'April 30, 2025',
-      provider: 'Vision Center',
-      benefits: 'Covered 80% by your vision plan'
+      id: 3,
+      type: "Eye Exam",
+      recommendedDate: "August 19, 2025",
+      recommendedTime: "3:15 PM",
+      provider: "Dr. Patel",
+      location: "Clear Vision Optometry",
+      priority: "Medium",
+      status: "Recommended",
+      reason: "Annual vision check",
+      preparationSteps: [
+        "Bring current glasses/contacts",
+        "Plan for possible pupil dilation"
+      ],
+      conflictResolution: "Scheduled after your team meeting on Aug 19",
+      workConflict: true,
+      benefitDeadline: "December 31, 2025",
+      workImpact: "Medium (2 hours PTO, limited screen use after)"
+    },
+    {
+      id: 4,
+      type: "Skin Check",
+      recommendedDate: "September 10, 2025",
+      recommendedTime: "9:00 AM",
+      provider: "Dr. Johnson",
+      location: "Dermatology Associates",
+      priority: "Medium",
+      status: "Recommended",
+      reason: "First-time skin cancer screening",
+      preparationSteps: [
+        "Remove nail polish",
+        "Note any concerning moles/spots",
+        "Limited makeup day of appointment"
+      ],
+      conflictResolution: "Grouped with your quarterly planning day (half day off)",
+      workConflict: false,
+      benefitDeadline: "December 31, 2025",
+      workImpact: "Low (combined with planned PTO)"
+    },
+    {
+      id: 5,
+      type: "Flu Vaccination",
+      recommendedDate: "October 7, 2025",
+      recommendedTime: "11:30 AM",
+      provider: "Company Wellness Clinic",
+      location: "Office 3rd Floor",
+      priority: "High",
+      status: "Recommended",
+      reason: "Annual flu prevention",
+      preparationSteps: [
+        "No special preparation needed"
+      ],
+      conflictResolution: "On-site company clinic during lunch break",
+      workConflict: false,
+      benefitDeadline: "December 31, 2025",
+      workImpact: "None (on-site during lunch)"
     }
   ];
-
-  const nextBestAction: NextBestAction = {
-    title: 'Schedule your overdue eye exam',
-    description: 'Your annual eye exam is past due. Scheduling now will help maintain your vision health and boost your health score.',
-    healthScoreImpact: 12
+  
+  // Filter appointments for current month
+  const currentMonthAppointments = recommendations.filter(rec => {
+    const date = new Date(rec.recommendedDate);
+    return date.getMonth() === currentMonth;
+  });
+  
+  // Function to get upcoming appointments for timeline view
+  const getTimelineAppointments = () => {
+    return recommendations.sort((a, b) => {
+      const dateA = new Date(a.recommendedDate);
+      const dateB = new Date(b.recommendedDate);
+      return dateA - dateB;
+    });
+  };
+  
+  const handlePrevMonth = () => {
+    setCurrentMonth(prev => (prev === 0 ? 11 : prev - 1));
+  };
+  
+  const handleNextMonth = () => {
+    setCurrentMonth(prev => (prev === 11 ? 0 : prev + 1));
+  };
+  
+  const handleExpandCard = (id) => {
+    setExpanded(expanded === id ? null : id);
   };
 
-  const optimizationSuggestions: OptimizationSuggestions = {
-    message: 'Your care schedule has been optimized to fit your work calendar and maximize your benefits before year-end.'
-  };
-
-  const isLoading = false;
-
-  const filterItems = () => {
-    if (!timelineData) return [];
+  const handleScheduleAppointment = (appointmentId) => {
+    // Find the appointment
+    const appointment = recommendations.find(rec => rec.id === appointmentId);
     
-    switch (selectedFilter) {
-      case 'upcoming':
-        return timelineData.filter(item => item.status === 'upcoming');
-      case 'overdue':
-        return timelineData.filter(item => item.status === 'overdue');
-      default:
-        return timelineData;
+    if (appointment) {
+      // Show confirmation alert with pre-selected details
+      console.log(`One-click scheduling for: ${appointment.type}`);
+      console.log(`Recommended: ${appointment.recommendedDate} at ${appointment.recommendedTime}`);
+      console.log(`Provider: ${appointment.provider} at ${appointment.location}`);
+      
+      // In a real app, this would:
+      // 1. Call API to book the appointment with recommended details
+      // 2. Update the appointment status to "Scheduled"
+      // 3. Show success confirmation
+      // 4. Add to user's calendar
+      
+      // For demo purposes, update the status locally
+      const updatedRecommendations = recommendations.map(rec => 
+        rec.id === appointmentId 
+          ? { ...rec, status: "Scheduled" }
+          : rec
+      );
+      
+      // Show success message
+      alert(`✅ Appointment scheduled!\n\n${appointment.type}\n${appointment.recommendedDate} at ${appointment.recommendedTime}\n${appointment.provider}\n\nConfirmation sent to your email.`);
     }
   };
 
-  const getStatusStyle = (status: string) => {
+  const handleEditAppointment = (appointmentId) => {
+    const appointment = recommendations.find(rec => rec.id === appointmentId);
+    
+    if (appointment) {
+      console.log(`Edit appointment: ${appointment.type}`);
+      
+      // Navigate to the schedule appointment page
+      router.push('/employee/appointments/schedule');
+    }
+  };
+  
+  const getStatusColors = (status) => {
     switch (status) {
-      case 'completed':
-        return [styles.statusBadge, styles.completedBadge];
-      case 'upcoming':
-        return [styles.statusBadge, styles.upcomingBadge];
-      case 'overdue':
-        return [styles.statusBadge, styles.overdueBadge];
+      case "Scheduled":
+        return { bg: '#dcfce7', text: '#166534' };
+      case "Pending Confirmation":
+        return { bg: '#fef3c7', text: '#92400e' };
+      case "Recommended":
+        return { bg: '#dbeafe', text: '#1e40af' };
       default:
-        return [styles.statusBadge, styles.defaultBadge];
+        return { bg: '#f3f4f6', text: '#374151' };
     }
   };
-
-  const getStatusTextStyle = (status: string) => {
-    switch (status) {
-      case 'completed':
-        return styles.completedText;
-      case 'upcoming':
-        return styles.upcomingText;
-      case 'overdue':
-        return styles.overdueText;
-      default:
-        return styles.defaultText;
-    }
-  };
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'completed':
-        return <CheckCircle size={16} color="#16A34A" />;
-      case 'overdue':
-        return <AlertCircle size={16} color="#DC2626" />;
-      default:
-        return <Clock size={16} color="#3B82F6" />;
-    }
-  };
-
-  if (isLoading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <Text style={styles.loadingText}>Loading your care timeline...</Text>
-      </View>
-    );
-  }
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.content}>
-        {/* Header */}
-        <View style={styles.header}>
-          <Text style={styles.title}>Care Timeline</Text>
-          <Text style={styles.subtitle}>
-            Your optimized preventative care schedule
+    <View style={styles.container}>
+      <Header title="Care Coordination" showBackButton />
+      
+      {/* AI Recommendation Banner */}
+      <View style={styles.aiBanner}>
+        <View style={styles.aiIconContainer}>
+          <Info size={16} color="#2563eb" />
+        </View>
+        <View style={styles.aiBannerContent}>
+          <Text style={styles.aiBannerTitle}>AI Care Coordination</Text>
+          <Text style={styles.aiBannerText}>
+            We've analyzed your work calendar, benefits deadlines, and provider availability to create your optimal preventative care timeline.
           </Text>
         </View>
-
-        {/* AI Optimization Banner */}
-        {optimizationSuggestions && (
-          <View style={styles.optimizationBanner}>
-            <View style={styles.optimizationHeader}>
-              <Sparkles size={20} color="white" />
-              <Text style={styles.optimizationTitle}>AI-Optimized Schedule</Text>
-            </View>
-            <Text style={styles.optimizationMessage}>
-              {optimizationSuggestions.message}
-            </Text>
-            <Pressable style={styles.optimizationButton}>
-              <Text style={styles.optimizationButtonText}>
-                View Optimization Details
-              </Text>
+      </View>
+      
+      <ScrollView style={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        {/* Monthly View Controls */}
+        <View style={styles.monthlyControls}>
+          <View style={styles.monthNavigation}>
+            <Pressable onPress={handlePrevMonth} style={styles.navButton}>
+              <ChevronLeft size={18} color="#374151" />
+            </Pressable>
+            <Text style={styles.monthTitle}>{months[currentMonth]} 2025</Text>
+            <Pressable onPress={handleNextMonth} style={styles.navButton}>
+              <ChevronRight size={18} color="#374151" />
             </Pressable>
           </View>
-        )}
-
-        {/* Next Best Action */}
-        {nextBestAction && (
-          <View style={styles.card}>
-            <View style={styles.cardContent}>
-              <View style={styles.nextActionHeader}>
-                <ArrowRight size={20} color="#3B82F6" />
-                <Text style={styles.nextActionTitle}>Next Best Action</Text>
-              </View>
-              
-              <View style={styles.nextActionCard}>
-                <Text style={styles.nextActionCardTitle}>
-                  {nextBestAction.title}
+          
+          {/* Monthly Appointments */}
+          <View style={styles.monthlyAppointments}>
+            {currentMonthAppointments.length > 0 ? (
+              currentMonthAppointments.map(appointment => {
+                const statusColors = getStatusColors(appointment.status);
+                return (
+                  <View key={appointment.id} style={styles.appointmentCard}>
+                    <View style={styles.appointmentHeader}>
+                      <Text style={styles.appointmentType}>{appointment.type}</Text>
+                      <View style={[styles.statusBadge, { backgroundColor: statusColors.bg }]}>
+                        <Text style={[styles.statusText, { color: statusColors.text }]}>
+                          {appointment.status}
+                        </Text>
+                      </View>
+                    </View>
+                    
+                    <View style={styles.appointmentDetails}>
+                      <View style={styles.detailRow}>
+                        <Calendar size={14} color="#6b7280" />
+                        <Text style={styles.detailText}>
+                          {appointment.recommendedDate} at {appointment.recommendedTime}
+                        </Text>
+                      </View>
+                      
+                      <View style={styles.detailRow}>
+                        <MapPin size={14} color="#6b7280" />
+                        <Text style={styles.detailText}>
+                          {appointment.provider}, {appointment.location}
+                        </Text>
+                      </View>
+                    </View>
+                    
+                    {/* Expand/collapse button */}
+                    <Pressable 
+                      style={styles.expandButton}
+                      onPress={() => handleExpandCard(appointment.id)}
+                    >
+                      <Text style={styles.expandButtonText}>
+                        {expanded === appointment.id ? "Less details" : "More details"}
+                      </Text>
+                      <ChevronRight 
+                        size={14} 
+                        color="#2563eb"
+                        style={[
+                          styles.expandIcon,
+                          expanded === appointment.id && styles.expandIconRotated
+                        ]}
+                      />
+                    </Pressable>
+                    
+                    {/* Expanded content */}
+                    {expanded === appointment.id && (
+                      <View style={styles.expandedContent}>
+                        <View style={styles.expandedSection}>
+                          <Text style={styles.expandedSectionTitle}>Why this matters:</Text>
+                          <Text style={styles.expandedSectionText}>{appointment.reason}</Text>
+                        </View>
+                        
+                        {appointment.workConflict && (
+                          <View style={styles.conflictSection}>
+                            <AlertCircle size={16} color="#f59e0b" style={styles.conflictIcon} />
+                            <Text style={styles.conflictText}>{appointment.conflictResolution}</Text>
+                          </View>
+                        )}
+                        
+                        <View style={styles.expandedSection}>
+                          <Text style={styles.expandedSectionTitle}>Preparation:</Text>
+                          <View style={styles.preparationList}>
+                            {appointment.preparationSteps.map((step, index) => (
+                              <Text key={index} style={styles.preparationItem}>
+                                • {step}
+                              </Text>
+                            ))}
+                          </View>
+                        </View>
+                        
+                        <View style={styles.appointmentMeta}>
+                          <View style={styles.metaItem}>
+                            <Text style={styles.metaLabel}>Benefit deadline:</Text>
+                            <Text style={styles.metaValue}>{appointment.benefitDeadline}</Text>
+                          </View>
+                          <View style={styles.metaItem}>
+                            <Text style={styles.metaLabel}>Work impact:</Text>
+                            <Text style={styles.metaValue}>{appointment.workImpact}</Text>
+                          </View>
+                        </View>
+                        
+                        {appointment.status === "Recommended" && (
+                          <View style={styles.actionButtons}>
+                            <Pressable 
+                              style={styles.scheduleButton}
+                              onPress={() => handleScheduleAppointment(appointment.id)}
+                            >
+                              <Text style={styles.scheduleButtonText}>Schedule Now</Text>
+                            </Pressable>
+                            <Pressable 
+                              style={styles.editButton}
+                              onPress={() => handleEditAppointment(appointment.id)}
+                            >
+                              <Text style={styles.editButtonText}>Edit Details</Text>
+                            </Pressable>
+                          </View>
+                        )}
+                      </View>
+                    )}
+                  </View>
+                );
+              })
+            ) : (
+              <View style={styles.emptyMonth}>
+                <Text style={styles.emptyMonthText}>
+                  No appointments scheduled for {months[currentMonth]}
                 </Text>
-                <Text style={styles.nextActionDescription}>
-                  {nextBestAction.description}
-                </Text>
-                <View style={styles.nextActionFooter}>
-                  <Text style={styles.impactText}>
-                    Impact: +{nextBestAction.healthScoreImpact} health score points
-                  </Text>
-                  <Pressable style={styles.scheduleButton}>
-                    <Text style={styles.scheduleButtonText}>Schedule Now</Text>
-                  </Pressable>
-                </View>
               </View>
-            </View>
+            )}
           </View>
-        )}
-
-        {/* Filter Tabs */}
-        <View style={styles.filterContainer}>
-          {[
-            { key: 'all', label: 'All Items' },
-            { key: 'upcoming', label: 'Upcoming' },
-            { key: 'overdue', label: 'Overdue' }
-          ].map((filter) => (
-            <Pressable
-              key={filter.key}
-              onPress={() => setSelectedFilter(filter.key as any)}
-              style={[
-                styles.filterTab,
-                selectedFilter === filter.key && styles.activeFilterTab
-              ]}
-            >
-              <Text style={[
-                styles.filterTabText,
-                selectedFilter === filter.key && styles.activeFilterTabText
-              ]}>
-                {filter.label}
-              </Text>
-            </Pressable>
-          ))}
         </View>
-
-        {/* Timeline Items */}
-        <View style={styles.timelineList}>
-          {filterItems().map((item, index) => (
-            <View key={item.id} style={styles.timelineItem}>
-              <View style={styles.timelineItemContent}>
-                <View style={styles.timelineItemHeader}>
-                  <View style={styles.timelineItemInfo}>
-                    <Text style={styles.timelineItemTitle}>
-                      {item.title}
-                    </Text>
-                    <Text style={styles.timelineItemDescription}>
-                      {item.description}
-                    </Text>
-                  </View>
-                  <View style={getStatusStyle(item.status)}>
-                    {getStatusIcon(item.status)}
-                    <Text style={[styles.statusText, getStatusTextStyle(item.status)]}>
-                      {item.status}
-                    </Text>
-                  </View>
-                </View>
-
-                <View style={styles.timelineItemDetails}>
-                  <View style={styles.dateContainer}>
-                    <Calendar size={16} color="#6B7280" />
-                    <Text style={styles.dateText}>
-                      {item.dueDate}
-                    </Text>
+        
+        {/* Timeline View */}
+        <View style={styles.timelineSection}>
+          <Text style={styles.timelineTitle}>Annual Care Timeline</Text>
+          <View style={styles.timelineContainer}>
+            <View style={styles.timelineLine} />
+            
+            {getTimelineAppointments().map((appointment, index) => {
+              const date = new Date(appointment.recommendedDate);
+              const month = months[date.getMonth()].substring(0, 3);
+              const day = date.getDate();
+              
+              return (
+                <View key={appointment.id} style={styles.timelineItem}>
+                  <View style={styles.timelineDot}>
+                    {appointment.status === "Scheduled" ? (
+                      <CheckCircle size={14} color="#10b981" />
+                    ) : (
+                      <View style={styles.timelineDotInner} />
+                    )}
                   </View>
                   
-                  {item.provider && (
-                    <Text style={styles.providerText}>
-                      {item.provider}
-                    </Text>
-                  )}
+                  <View style={styles.timelineContent}>
+                    <Text style={styles.timelineDate}>{month} {day}</Text>
+                    <Text style={styles.timelineItemTitle}>{appointment.type}</Text>
+                    
+                    {appointment.conflictResolution && (
+                      <View style={styles.optimizedTag}>
+                        <Clock size={12} color="#6b7280" />
+                        <Text style={styles.optimizedText}>Optimized scheduling</Text>
+                      </View>
+                    )}
+                  </View>
+                  
+                  <View style={styles.timelineAction}>
+                    {appointment.status === "Scheduled" ? (
+                      <Text style={styles.confirmedText}>Confirmed</Text>
+                    ) : appointment.status === "Pending Confirmation" ? (
+                      <Text style={styles.pendingText}>Pending</Text>
+                    ) : (
+                      <View style={styles.timelineActions}>
+                        <Pressable 
+                          style={styles.timelineScheduleButton}
+                          onPress={() => handleScheduleAppointment(appointment.id)}
+                        >
+                          <Text style={styles.timelineScheduleText}>Schedule</Text>
+                          <ArrowRight size={14} color="#2563eb" />
+                        </Pressable>
+                        <Pressable 
+                          style={styles.timelineEditButton}
+                          onPress={() => handleEditAppointment(appointment.id)}
+                        >
+                          <Text style={styles.timelineEditText}>Edit</Text>
+                        </Pressable>
+                      </View>
+                    )}
+                  </View>
                 </View>
-
-                {item.benefits && (
-                  <View style={styles.benefitsContainer}>
-                    <Text style={styles.benefitsText}>
-                      <Text style={styles.benefitsLabel}>Benefits:</Text> {item.benefits}
-                    </Text>
-                  </View>
-                )}
-
-                {item.status !== 'completed' && (
-                  <View style={styles.actionButtons}>
-                    <Pressable style={styles.primaryActionButton}>
-                      <Text style={styles.primaryActionButtonText}>
-                        Schedule
-                      </Text>
-                    </Pressable>
-                    <Pressable style={styles.secondaryActionButton}>
-                      <Text style={styles.secondaryActionButtonText}>
-                        Learn More
-                      </Text>
-                    </Pressable>
-                  </View>
-                )}
-              </View>
-            </View>
-          ))}
-        </View>
-
-        {/* Benefits Summary */}
-        <View style={styles.card}>
-          <View style={styles.cardContent}>
-            <Text style={styles.benefitsSummaryTitle}>Your Benefits Coverage</Text>
-            
-            <View style={styles.benefitsList}>
-              <View style={styles.benefitRow}>
-                <Text style={styles.benefitLabel}>Preventative Care Coverage</Text>
-                <Text style={styles.benefitValueGreen}>100%</Text>
-              </View>
-              <View style={styles.benefitRow}>
-                <Text style={styles.benefitLabel}>Annual Wellness Fund</Text>
-                <Text style={styles.benefitValue}>$500 remaining</Text>
-              </View>
-              <View style={styles.benefitRow}>
-                <Text style={styles.benefitLabel}>Benefits Year Ends</Text>
-                <Text style={styles.benefitValueOrange}>Dec 31, 2025</Text>
-              </View>
-            </View>
+              );
+            })}
           </View>
         </View>
+
+        {/* Bottom padding to prevent content being hidden behind footer */}
+        <View style={styles.bottomPadding} />
+      </ScrollView>
+      
+      {/* Footer message */}
+      <View style={styles.footerMessage}>
+        <Text style={styles.footerMessageText}>
+          This AI-driven timeline will update as appointments are scheduled
+        </Text>
       </View>
-    </ScrollView>
+      
+      <Footer activePath="care-timeline" employee={true} />
+    </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F9FAFB',
+    backgroundColor: '#f9fafb',
   },
-  content: {
-    padding: 16,
-  },
-  loadingContainer: {
-    flex: 1,
-    backgroundColor: '#F9FAFB',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  loadingText: {
-    fontSize: 16,
-    color: '#6B7280',
-  },
-  header: {
-    marginBottom: 24,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#111827',
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#6B7280',
-    marginTop: 4,
-  },
-  optimizationBanner: {
-    backgroundColor: '#8B5CF6',
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 24,
-  },
-  optimizationHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  optimizationTitle: {
-    color: 'white',
-    fontWeight: '500',
-    marginLeft: 8,
-  },
-  optimizationMessage: {
-    color: 'white',
-    fontSize: 14,
-    lineHeight: 20,
-  },
-  optimizationButton: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: 8,
-    padding: 8,
-    marginTop: 12,
-  },
-  optimizationButtonText: {
-    color: 'white',
-    fontSize: 14,
-    fontWeight: '500',
-    textAlign: 'center',
-  },
-  card: {
-    backgroundColor: 'white',
-    borderRadius: 8,
-    marginBottom: 24,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-  },
-  cardContent: {
-    padding: 16,
-  },
-  nextActionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  nextActionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginLeft: 8,
-  },
-  nextActionCard: {
-    backgroundColor: '#EFF6FF',
-    borderRadius: 8,
-    padding: 16,
-  },
-  nextActionCardTitle: {
-    fontWeight: '500',
-    color: '#1E3A8A',
-    marginBottom: 8,
-  },
-  nextActionDescription: {
-    color: '#1D4ED8',
-    fontSize: 14,
-    marginBottom: 12,
-    lineHeight: 20,
-  },
-  nextActionFooter: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  impactText: {
-    color: '#2563EB',
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  scheduleButton: {
-    backgroundColor: '#2563EB',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 8,
-  },
-  scheduleButtonText: {
-    color: 'white',
-    fontWeight: '500',
-  },
-  filterContainer: {
-    flexDirection: 'row',
-    backgroundColor: 'white',
-    borderRadius: 8,
-    marginBottom: 24,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-  },
-  filterTab: {
-    flex: 1,
+  aiBanner: {
+    backgroundColor: '#eff6ff',
     padding: 12,
-    borderRadius: 8,
-  },
-  activeFilterTab: {
-    backgroundColor: '#2563EB',
-  },
-  filterTabText: {
-    textAlign: 'center',
-    fontWeight: '500',
-    color: '#6B7280',
-  },
-  activeFilterTabText: {
-    color: 'white',
-  },
-  timelineList: {
-    gap: 16,
-  },
-  timelineItem: {
-    backgroundColor: 'white',
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-  },
-  timelineItemContent: {
-    padding: 16,
-  },
-  timelineItemHeader: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    justifyContent: 'space-between',
-    marginBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#dbeafe',
   },
-  timelineItemInfo: {
-    flex: 1,
+  aiIconContainer: {
+    backgroundColor: '#dbeafe',
+    borderRadius: 12,
+    padding: 6,
     marginRight: 12,
+    marginTop: 2,
   },
-  timelineItemTitle: {
+  aiBannerContent: {
+    flex: 1,
+  },
+  aiBannerTitle: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#1e40af',
+    marginBottom: 2,
+  },
+  aiBannerText: {
+    fontSize: 12,
+    color: '#2563eb',
+    lineHeight: 16,
+  },
+  scrollContent: {
+    flex: 1,
+  },
+  monthlyControls: {
+    padding: 16,
+  },
+  monthNavigation: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  navButton: {
+    padding: 4,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    backgroundColor: '#fff',
+  },
+  monthTitle: {
+    fontSize: 18,
     fontWeight: '600',
     color: '#111827',
-    fontSize: 18,
-    marginBottom: 4,
   },
-  timelineItemDescription: {
-    color: '#6B7280',
-    fontSize: 14,
-    lineHeight: 20,
+  monthlyAppointments: {
+    marginBottom: 24,
+  },
+  appointmentCard: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+    overflow: 'hidden',
+  },
+  appointmentHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 12,
+  },
+  appointmentType: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#111827',
   },
   statusBadge: {
+    paddingVertical: 2,
     paddingHorizontal: 8,
-    paddingVertical: 4,
     borderRadius: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  completedBadge: {
-    backgroundColor: '#DCFCE7',
-  },
-  upcomingBadge: {
-    backgroundColor: '#DBEAFE',
-  },
-  overdueBadge: {
-    backgroundColor: '#FEE2E2',
-  },
-  defaultBadge: {
-    backgroundColor: '#F3F4F6',
   },
   statusText: {
     fontSize: 12,
     fontWeight: '500',
-    marginLeft: 4,
-    textTransform: 'capitalize',
   },
-  completedText: {
-    color: '#059669',
+  appointmentDetails: {
+    paddingHorizontal: 12,
+    paddingBottom: 8,
   },
-  upcomingText: {
-    color: '#2563EB',
-  },
-  overdueText: {
-    color: '#DC2626',
-  },
-  defaultText: {
-    color: '#6B7280',
-  },
-  timelineItemDetails: {
+  detailRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    marginBottom: 4,
   },
-  dateContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  dateText: {
-    color: '#6B7280',
+  detailText: {
     fontSize: 14,
+    color: '#6b7280',
     marginLeft: 4,
   },
-  providerText: {
-    color: '#9CA3AF',
-    fontSize: 14,
+  expandButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
   },
-  benefitsContainer: {
-    marginTop: 12,
+  expandButtonText: {
+    fontSize: 12,
+    color: '#2563eb',
+    marginRight: 4,
+  },
+  expandIcon: {
+    transform: [{ rotate: '0deg' }],
+  },
+  expandIconRotated: {
+    transform: [{ rotate: '90deg' }],
+  },
+  expandedContent: {
+    backgroundColor: '#f9fafb',
     padding: 12,
-    backgroundColor: '#F9FAFB',
-    borderRadius: 8,
+    borderTopWidth: 1,
+    borderTopColor: '#e5e7eb',
   },
-  benefitsText: {
+  expandedSection: {
+    marginBottom: 12,
+  },
+  expandedSectionTitle: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#111827',
+    marginBottom: 4,
+  },
+  expandedSectionText: {
+    fontSize: 14,
+    color: '#6b7280',
+    lineHeight: 20,
+  },
+  conflictSection: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 12,
+  },
+  conflictIcon: {
+    marginRight: 8,
+    marginTop: 2,
+  },
+  conflictText: {
     fontSize: 14,
     color: '#374151',
+    flex: 1,
+    lineHeight: 20,
   },
-  benefitsLabel: {
+  preparationList: {
+    marginLeft: 8,
+  },
+  preparationItem: {
+    fontSize: 14,
+    color: '#6b7280',
+    marginBottom: 2,
+    lineHeight: 20,
+  },
+  appointmentMeta: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 12,
+    marginBottom: 12,
+  },
+  metaItem: {
+    flex: 1,
+  },
+  metaLabel: {
+    fontSize: 12,
     fontWeight: '500',
+    color: '#374151',
+  },
+  metaValue: {
+    fontSize: 12,
+    color: '#6b7280',
+    marginTop: 2,
   },
   actionButtons: {
-    marginTop: 16,
-    flexDirection: 'row',
-    gap: 8,
+    marginTop: 8,
   },
-  primaryActionButton: {
-    flex: 1,
-    backgroundColor: '#2563EB',
-    paddingVertical: 8,
+  scheduleButton: {
+    backgroundColor: '#2563eb',
     borderRadius: 8,
+    paddingVertical: 8,
+    alignItems: 'center',
+    marginBottom: 8,
   },
-  primaryActionButtonText: {
-    color: 'white',
-    fontWeight: '500',
-    textAlign: 'center',
+  scheduleButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#fff',
   },
-  secondaryActionButton: {
-    flex: 1,
+  editButton: {
+    backgroundColor: 'transparent',
     borderWidth: 1,
-    borderColor: '#D1D5DB',
-    paddingVertical: 8,
+    borderColor: '#d1d5db',
     borderRadius: 8,
+    paddingVertical: 8,
+    alignItems: 'center',
   },
-  secondaryActionButtonText: {
-    color: '#374151',
+  editButtonText: {
+    fontSize: 14,
     fontWeight: '500',
-    textAlign: 'center',
+    color: '#6b7280',
   },
-  benefitsSummaryTitle: {
+  emptyMonth: {
+    paddingVertical: 32,
+    alignItems: 'center',
+  },
+  emptyMonthText: {
+    fontSize: 14,
+    color: '#9ca3af',
+  },
+  timelineSection: {
+    paddingHorizontal: 16,
+    marginBottom: 24,
+  },
+  timelineTitle: {
     fontSize: 18,
     fontWeight: '600',
-    marginBottom: 16,
+    color: '#111827',
+    marginBottom: 12,
   },
-  benefitsList: {
-    gap: 12,
+  timelineContainer: {
+    position: 'relative',
   },
-  benefitRow: {
+  timelineLine: {
+    position: 'absolute',
+    left: 12,
+    top: 0,
+    bottom: 0,
+    width: 2,
+    backgroundColor: '#dbeafe',
+    zIndex: 0,
+  },
+  timelineItem: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 16,
+    position: 'relative',
+    zIndex: 10,
   },
-  benefitLabel: {
-    color: '#6B7280',
+  timelineDot: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: '#fff',
+    borderWidth: 2,
+    borderColor: '#2563eb',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 16,
+    marginTop: 2,
   },
-  benefitValue: {
+  timelineDotInner: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#2563eb',
+  },
+  timelineContent: {
+    flex: 1,
+  },
+  timelineDate: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#9ca3af',
+    marginBottom: 2,
+  },
+  timelineItemTitle: {
+    fontSize: 14,
     fontWeight: '500',
+    color: '#111827',
+    marginBottom: 4,
   },
-  benefitValueGreen: {
-    fontWeight: '500',
-    color: '#059669',
+  optimizedTag: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 2,
   },
-  benefitValueOrange: {
+  optimizedText: {
+    fontSize: 12,
+    color: '#6b7280',
+    marginLeft: 4,
+  },
+  timelineAction: {
+    alignItems: 'flex-end',
+    minWidth: 80,
+  },
+  timelineActions: {
+    alignItems: 'flex-end',
+  },
+  timelineScheduleButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  timelineScheduleText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#2563eb',
+    marginRight: 4,
+  },
+  timelineEditButton: {
+    paddingVertical: 2,
+  },
+  timelineEditText: {
+    fontSize: 11,
+    color: '#6b7280',
+    textDecorationLine: 'underline',
+  },
+  confirmedText: {
+    fontSize: 12,
     fontWeight: '500',
-    color: '#EA580C',
+    color: '#10b981',
+  },
+  pendingText: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: '#f59e0b',
+  },
+  footerMessage: {
+    backgroundColor: '#f3f4f6',
+    borderTopWidth: 1,
+    borderTopColor: '#e5e7eb',
+    padding: 16,
+    alignItems: 'center',
+  },
+  footerMessageText: {
+    fontSize: 12,
+    color: '#6b7280',
+    textAlign: 'center',
+  },
+  bottomPadding: {
+    height: 20,
   },
 });
+
+export default CareCoordinationTimeline;

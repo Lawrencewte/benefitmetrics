@@ -1,3 +1,5 @@
+import Footer from '@/src/components/Common/layout/Footer';
+import Header from '@/src/components/Common/layout/Header';
 import React, { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import Button from '../../../components/Common/ui/Button';
@@ -91,6 +93,7 @@ export default function NotificationSettings() {
 
   return (
     <View style={styles.container}>
+      <Header title="Notification Settings" showBackButton />
       <ScrollView style={styles.scrollView}>
         <Text style={styles.title}>Notification Settings</Text>
 
@@ -255,6 +258,7 @@ export default function NotificationSettings() {
           />
         </View>
       </ScrollView>
+      <Footer />
     </View>
   );
 }

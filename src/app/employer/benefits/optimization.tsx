@@ -1,6 +1,8 @@
+import EmployerFooter from '@/src/components/Common/layout/EmployerFooter';
 import { AlertTriangle, Check, DollarSign, Lightbulb, Target, TrendingUp, Users } from 'lucide-react-native';
 import { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
 
 interface OptimizationOpportunity {
   id: string;
@@ -481,6 +483,7 @@ export default function BenefitsOptimization() {
         {selectedView === 'comparison' && renderComparison()}
         {selectedView === 'recommendations' && renderRecommendations()}
       </ScrollView>
+      <EmployerFooter />
     </View>
   );
 }

@@ -1,10 +1,13 @@
 
+import Footer from '@/src/components/Common/layout/Footer';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Calendar, Edit, User } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Button from '../../../../../components/Common/ui/Button';
 import { useFamilyMembers } from '../../../../../hooks/employee/useFamilyMembers';
+
+
 interface FamilyMember {
   id: string;
   firstName: string;
@@ -222,6 +225,7 @@ export default function FamilyMemberDetails() {
           />
         </View>
       </ScrollView>
+      <Footer />
     </View>
   );
 }

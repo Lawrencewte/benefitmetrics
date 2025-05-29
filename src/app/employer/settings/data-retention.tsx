@@ -1,6 +1,8 @@
+import EmployerFooter from '@/src/components/Common/layout/EmployerFooter';
 import { CheckCircle, Clock, Database, Eye } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
+
 
 interface DataCategory {
   id: string;
@@ -437,6 +439,7 @@ export default function DataRetentionPage() {
           ))}
         </View>
       </ScrollView>
+      <EmployerFooter />
     </SafeAreaView>
   );
 }

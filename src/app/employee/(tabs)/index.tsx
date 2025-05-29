@@ -1,18 +1,11 @@
 import { Link } from 'expo-router';
 import { ArrowRight, Calendar, CheckCircle, FileText, Gift, Info } from 'lucide-react-native';
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-// Remove Footer import - not needed with Expo Router Tabs
-// import Footer, { EMPLOYEE_TABS } from '../../components/Common/layout/Footer';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import Header from '../../../components/Common/layout/Header';
 import PointsDisplay from '../../../components/Common/shared/PointsDisplay';
 import ProgressBar from '../../../components/Common/ui/ProgressBar';
 import { useAuth } from '../../../hooks/Common/useAuth';
-// Comment out problematic hooks for now
-// import { useCareTimeline } from '../../hooks/employee/useCareTimeline';
-// import { useHealthScore } from '../../hooks/employee/useHealthScore';
-// import { useNextBestAction } from '../../hooks/employee/useNextBestAction';
-// import { useROITracker } from '../../hooks/employee/useROITracker';
 
 export default function EmployeeDashboard() {
   const { user } = useAuth();
@@ -40,16 +33,366 @@ export default function EmployeeDashboard() {
     setHighlightedFeature(highlightedFeature === feature ? null : feature);
   };
 
+  // Define inline styles for React Native Web compatibility
+  const containerStyle = {
+    flex: 1,
+    backgroundColor: '#F5F7F9',
+  };
+
+  const contentStyle = {
+    flex: 1,
+    padding: 16,
+  };
+
+  const welcomeContainerStyle = {
+    flexDirection: 'row' as const,
+    justifyContent: 'space-between' as const,
+    alignItems: 'center' as const,
+    marginBottom: 24,
+  };
+
+  const welcomeTextStyle = {
+    fontSize: 20,
+    fontWeight: '600' as const,
+  };
+
+  const subtitleTextStyle = {
+    fontSize: 14,
+    color: '#666',
+  };
+
+  const cardStyle = {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+  };
+
+  const highlightedCardStyle = {
+    borderColor: '#4682B4',
+    borderWidth: 2,
+    shadowColor: '#4682B4',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 3,
+  };
+
+  const cardContentStyle = {
+    alignItems: 'center' as const,
+  };
+
+  const cardTitleStyle = {
+    fontSize: 16,
+    fontWeight: '500' as const,
+    marginBottom: 4,
+  };
+
+  const scoreTextStyle = {
+    fontSize: 36,
+    fontWeight: 'bold' as const,
+    color: '#4682B4',
+    marginVertical: 4,
+  };
+
+  const trendTextStyle = {
+    fontSize: 12,
+    color: '#4CAF50',
+    marginBottom: 8,
+  };
+
+  const scoreRangeStyle = {
+    flexDirection: 'row' as const,
+    justifyContent: 'space-between' as const,
+    width: '100%',
+    marginTop: 4,
+  };
+
+  const rangeTextStyle = {
+    fontSize: 10,
+    color: '#666',
+  };
+
+  const newFeatureBadgeStyle = {
+    backgroundColor: '#E6F0F9',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+    alignSelf: 'flex-start' as const,
+    marginBottom: 8,
+  };
+
+  const newFeatureTextStyle = {
+    fontSize: 10,
+    color: '#4682B4',
+    fontWeight: '600' as const,
+  };
+
+  const featureDetailStyle = {
+    backgroundColor: '#F0F7FF',
+    padding: 12,
+    borderRadius: 8,
+    marginTop: 12,
+  };
+
+  const detailTitleStyle = {
+    fontSize: 14,
+    fontWeight: '600' as const,
+    color: '#4682B4',
+    marginBottom: 4,
+  };
+
+  const detailTextStyle = {
+    fontSize: 12,
+    color: '#333',
+    marginBottom: 8,
+  };
+
+  const categoriesContainerStyle = {
+    flexDirection: 'row' as const,
+    justifyContent: 'space-between' as const,
+    marginTop: 8,
+  };
+
+  const categoryStyle = {
+    alignItems: 'center' as const,
+    flex: 1,
+  };
+
+  const categoryTitleStyle = {
+    fontSize: 10,
+    fontWeight: '500' as const,
+    color: '#4682B4',
+    marginBottom: 2,
+  };
+
+  const categoryValueStyle = {
+    fontSize: 10,
+    color: '#333',
+  };
+
+  const rowContainerStyle = {
+    flexDirection: 'row' as const,
+    marginBottom: 16,
+    gap: 8,
+  };
+
+  const smallCardStyle = {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+  };
+
+  const smallCardContentStyle = {
+    alignItems: 'center' as const,
+  };
+
+  const smallCardTitleStyle = {
+    fontSize: 14,
+    fontWeight: '500' as const,
+    textAlign: 'center' as const,
+  };
+
+  const smallSubtitleStyle = {
+    fontSize: 10,
+    color: '#666',
+  };
+
+  const savingsTextStyle = {
+    fontSize: 22,
+    fontWeight: 'bold' as const,
+    color: '#4CAF50',
+    marginVertical: 4,
+  };
+
+  const appointmentDetailStyle = {
+    fontSize: 12,
+    color: '#666',
+    marginTop: 4,
+  };
+
+  const savingsBreakdownStyle = {
+    marginTop: 8,
+  };
+
+  const savingsRowStyle = {
+    flexDirection: 'row' as const,
+    justifyContent: 'space-between' as const,
+    marginBottom: 4,
+  };
+
+  const savingsLabelStyle = {
+    fontSize: 10,
+    color: '#666',
+  };
+
+  const savingsValueStyle = {
+    fontSize: 10,
+    fontWeight: '600' as const,
+    color: '#333',
+  };
+
+  const infoCardStyle = {
+    backgroundColor: '#E6F0F9',
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#C9DEF0',
+  };
+
+  const highlightedInfoCardStyle = {
+    borderColor: '#4682B4',
+    borderWidth: 2,
+  };
+
+  const infoContentStyle = {
+    flexDirection: 'row' as const,
+    alignItems: 'flex-start' as const,
+  };
+
+  const infoIconStyle = {
+    marginRight: 8,
+    marginTop: 2,
+  };
+
+  const infoTextStyle = {
+    flex: 1,
+    fontSize: 12,
+    color: '#4682B4',
+  };
+
+  const benefitsListStyle = {
+    marginTop: 8,
+  };
+
+  const benefitItemStyle = {
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    marginBottom: 6,
+  };
+
+  const benefitTextStyle = {
+    fontSize: 10,
+    color: '#333',
+    marginLeft: 6,
+  };
+
+  const actionButtonStyle = {
+    backgroundColor: '#4682B4',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 6,
+    alignItems: 'center' as const,
+    marginTop: 10,
+  };
+
+  const actionButtonTextStyle = {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: '500' as const,
+  };
+
+  const nextActionCardStyle = {
+    backgroundColor: '#FFFAEB',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#FFE082',
+  };
+
+  const nextActionTitleStyle = {
+    fontSize: 14,
+    fontWeight: '600' as const,
+    color: '#F57C00',
+    marginBottom: 4,
+  };
+
+  const nextActionTextStyle = {
+    fontSize: 12,
+    color: '#333',
+  };
+
+  const actionButtonContainerStyle = {
+    alignItems: 'flex-start' as const,
+    marginTop: 8,
+  };
+
+  const sectionTitleStyle = {
+    fontSize: 18,
+    fontWeight: '600' as const,
+    marginBottom: 12,
+  };
+
+  const quickActionsContainerStyle = {
+    flexDirection: 'row' as const,
+    flexWrap: 'wrap' as const,
+    justifyContent: 'space-between' as const,
+    marginBottom: 24,
+  };
+
+  const quickActionStyle = {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 16,
+    alignItems: 'center' as const,
+    width: '48%',
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+  };
+
+  const actionIconStyle = {
+    marginBottom: 8,
+  };
+
+  const actionTextStyle = {
+    fontSize: 12,
+    fontWeight: '500' as const,
+    textAlign: 'center' as const,
+  };
+
+  const goalsCardStyle = {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 24,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+  };
+
+  const goalHeaderStyle = {
+    flexDirection: 'row' as const,
+    justifyContent: 'space-between' as const,
+    marginBottom: 8,
+  };
+
+  const goalTitleStyle = {
+    fontSize: 14,
+    fontWeight: '500' as const,
+  };
+
+  const goalProgressStyle = {
+    fontSize: 14,
+    color: '#4682B4',
+    fontWeight: '500' as const,
+  };
+
   return (
-    <View style={styles.container}>
-      {/* Header is integrated via component */}
-      <Header />
+    <View style={containerStyle}>
+      {/* Fix: Add title prop to Header */}
+      <Header title="BenefitMetrics" />
       
-      <ScrollView style={styles.content}>
-        <View style={styles.welcomeContainer}>
+      <ScrollView style={contentStyle}>
+        <View style={welcomeContainerStyle}>
           <View>
-            <Text style={styles.welcomeText}>Hi, {user?.firstName || 'there'}!</Text>
-            <Text style={styles.subtitleText}>Let's stay on top of your health</Text>
+            <Text style={welcomeTextStyle}>Hi, {user?.firstName || 'there'}!</Text>
+            <Text style={subtitleTextStyle}>Let's stay on top of your health</Text>
           </View>
           <PointsDisplay points={user?.points || 0} />
         </View>
@@ -57,95 +400,95 @@ export default function EmployeeDashboard() {
         {/* Health Score Feature */}
         <TouchableOpacity 
           style={[
-            styles.card, 
-            highlightedFeature === 'health-score' && styles.highlightedCard
+            cardStyle, 
+            highlightedFeature === 'health-score' && highlightedCardStyle
           ]}
           onPress={() => toggleHighlight('health-score')}
           activeOpacity={0.9}
         >
           {highlightedFeature === 'health-score' && (
-            <View style={styles.newFeatureBadge}>
-              <Text style={styles.newFeatureText}>NEW FEATURE</Text>
+            <View style={newFeatureBadgeStyle}>
+              <Text style={newFeatureTextStyle}>NEW FEATURE</Text>
             </View>
           )}
-          <View style={styles.cardContent}>
-            <Text style={styles.cardTitle}>Your Health Score</Text>
-            <Text style={styles.scoreText}>{healthScore}</Text>
-            <Text style={styles.trendText}>
+          <View style={cardContentStyle}>
+            <Text style={cardTitleStyle}>Your Health Score</Text>
+            <Text style={scoreTextStyle}>{healthScore}</Text>
+            <Text style={trendTextStyle}>
               {scoreTrend > 0 ? `↑ ${scoreTrend} points` : scoreTrend < 0 ? `↓ ${Math.abs(scoreTrend)} points` : 'No change'}
             </Text>
-            <ProgressBar progress={healthScore} />
-            <View style={styles.scoreRange}>
-              <Text style={styles.rangeText}>0</Text>
-              <Text style={styles.rangeText}>{scoreLevel} Level - 1 point to Gold</Text>
-              <Text style={styles.rangeText}>100</Text>
+            <ProgressBar progress={healthScore} color="#4682B4" />
+            <View style={scoreRangeStyle}>
+              <Text style={rangeTextStyle}>0</Text>
+              <Text style={rangeTextStyle}>{scoreLevel} Level - 1 point to Gold</Text>
+              <Text style={rangeTextStyle}>100</Text>
             </View>
           </View>
           
           {highlightedFeature === 'health-score' && (
-            <View style={styles.featureDetail}>
-              <Text style={styles.detailTitle}>Health Score System</Text>
-              <Text style={styles.detailText}>
+            <View style={featureDetailStyle}>
+              <Text style={detailTitleStyle}>Health Score System</Text>
+              <Text style={detailTextStyle}>
                 Track your preventative health metrics across different categories with our proprietary Health Score.
               </Text>
-              <View style={styles.categoriesContainer}>
-                <View style={styles.category}>
-                  <Text style={styles.categoryTitle}>Preventative Care</Text>
-                  <Text style={styles.categoryValue}>88/100</Text>
+              <View style={categoriesContainerStyle}>
+                <View style={categoryStyle}>
+                  <Text style={categoryTitleStyle}>Preventative Care</Text>
+                  <Text style={categoryValueStyle}>88/100</Text>
                 </View>
-                <View style={styles.category}>
-                  <Text style={styles.categoryTitle}>Wellness Activities</Text>
-                  <Text style={styles.categoryValue}>76/100</Text>
+                <View style={categoryStyle}>
+                  <Text style={categoryTitleStyle}>Wellness Activities</Text>
+                  <Text style={categoryValueStyle}>76/100</Text>
                 </View>
-                <View style={styles.category}>
-                  <Text style={styles.categoryTitle}>Risk Factors</Text>
-                  <Text style={styles.categoryValue}>91/100</Text>
+                <View style={categoryStyle}>
+                  <Text style={categoryTitleStyle}>Risk Factors</Text>
+                  <Text style={categoryValueStyle}>91/100</Text>
                 </View>
               </View>
             </View>
           )}
         </TouchableOpacity>
         
-        <View style={styles.rowContainer}>
+        <View style={rowContainerStyle}>
           {/* ROI Tracker Feature */}
           <TouchableOpacity 
             style={[
-              styles.smallCard, 
+              smallCardStyle, 
               { flex: highlightedFeature === 'roi-tracker' ? 3 : 1 },
-              highlightedFeature === 'roi-tracker' && styles.highlightedCard
+              highlightedFeature === 'roi-tracker' && highlightedCardStyle
             ]}
             onPress={() => toggleHighlight('roi-tracker')}
             activeOpacity={0.9}
           >
             {highlightedFeature === 'roi-tracker' && (
-              <View style={styles.newFeatureBadge}>
-                <Text style={styles.newFeatureText}>NEW FEATURE</Text>
+              <View style={newFeatureBadgeStyle}>
+                <Text style={newFeatureTextStyle}>NEW FEATURE</Text>
               </View>
             )}
-            <View style={styles.smallCardContent}>
-              <Text style={styles.smallCardTitle}>ROI</Text>
-              <Text style={styles.savingsText}>${totalSavings.toLocaleString()}</Text>
-              <Text style={styles.smallSubtitle}>Savings</Text>
+            <View style={smallCardContentStyle}>
+              <Text style={smallCardTitleStyle}>ROI</Text>
+              <Text style={savingsTextStyle}>${totalSavings.toLocaleString()}</Text>
+              <Text style={smallSubtitleStyle}>Savings</Text>
             </View>
             
             {highlightedFeature === 'roi-tracker' && (
-              <View style={styles.featureDetail}>
-                <Text style={styles.detailTitle}>ROI Tracker</Text>
-                <Text style={styles.detailText}>
+              <View style={featureDetailStyle}>
+                <Text style={detailTitleStyle}>ROI Tracker</Text>
+                <Text style={detailTextStyle}>
                   Visualize the financial benefits of your preventative healthcare activities.
                 </Text>
-                <View style={styles.savingsBreakdown}>
-                  <View style={styles.savingsRow}>
-                    <Text style={styles.savingsLabel}>Preventative Care:</Text>
-                    <Text style={styles.savingsValue}>$1,850</Text>
+                <View style={savingsBreakdownStyle}>
+                  <View style={savingsRowStyle}>
+                    <Text style={savingsLabelStyle}>Preventative Care:</Text>
+                    <Text style={savingsValueStyle}>$1,850</Text>
                   </View>
-                  <View style={styles.savingsRow}>
-                    <Text style={styles.savingsLabel}>Premium Discounts:</Text>
-                    <Text style={styles.savingsValue}>$360</Text>
+                  <View style={savingsRowStyle}>
+                    <Text style={savingsLabelStyle}>Premium Discounts:</Text>
+                    <Text style={savingsValueStyle}>$360</Text>
                   </View>
-                  <View style={styles.savingsRow}>
-                    <Text style={styles.savingsLabel}>Early Detection Value:</Text>
-                    <Text style={styles.savingsValue}>Priceless</Text>
+                  <View style={savingsRowStyle}>
+                    <Text style={savingsLabelStyle}>Early Detection Value:</Text>
+                    <Text style={savingsValueStyle}>Priceless</Text>
                   </View>
                 </View>
               </View>
@@ -153,13 +496,13 @@ export default function EmployeeDashboard() {
           </TouchableOpacity>
           
           {highlightedFeature !== 'roi-tracker' && (
-            <View style={[styles.smallCard, { flex: 2 }]}>
-              <View style={styles.smallCardContent}>
-                <Text style={styles.smallCardTitle}>
+            <View style={[smallCardStyle, { flex: 2 }]}>
+              <View style={smallCardContentStyle}>
+                <Text style={smallCardTitleStyle}>
                   Next: {nextAppointment?.type || 'No appointment'}
                 </Text>
                 {nextAppointment && (
-                  <Text style={styles.appointmentDetail}>
+                  <Text style={appointmentDetailStyle}>
                     {nextAppointment.date}, {nextAppointment.time}
                   </Text>
                 )}
@@ -171,54 +514,54 @@ export default function EmployeeDashboard() {
         {/* Care Timeline Feature */}
         <TouchableOpacity 
           style={[
-            styles.infoCard, 
-            highlightedFeature === 'care-timeline' && styles.highlightedInfoCard
+            infoCardStyle, 
+            highlightedFeature === 'care-timeline' && highlightedInfoCardStyle
           ]}
           onPress={() => toggleHighlight('care-timeline')}
           activeOpacity={0.9}
         >
           {highlightedFeature === 'care-timeline' && (
-            <View style={styles.newFeatureBadge}>
-              <Text style={styles.newFeatureText}>NEW FEATURE</Text>
+            <View style={newFeatureBadgeStyle}>
+              <Text style={newFeatureTextStyle}>NEW FEATURE</Text>
             </View>
           )}
-          <View style={styles.infoContent}>
-            <Info style={styles.infoIcon} size={16} color="#4682B4" />
-            <Text style={styles.infoText}>
+          <View style={infoContentStyle}>
+            <Info style={infoIconStyle} size={16} color="#4682B4" />
+            <Text style={infoTextStyle}>
               Your care timeline has been optimized to fit your work schedule and benefit deadlines.
             </Text>
           </View>
           
           {highlightedFeature === 'care-timeline' && (
-            <View style={styles.featureDetail}>
-              <Text style={styles.detailTitle}>Care Coordination Timeline</Text>
-              <Text style={styles.detailText}>
+            <View style={featureDetailStyle}>
+              <Text style={detailTitleStyle}>Care Coordination Timeline</Text>
+              <Text style={detailTextStyle}>
                 AI-powered appointment scheduling that considers:
               </Text>
-              <View style={styles.benefitsList}>
-                <View style={styles.benefitItem}>
+              <View style={benefitsListStyle}>
+                <View style={benefitItemStyle}>
                   <ArrowRight size={12} color="#4682B4" />
-                  <Text style={styles.benefitText}>Your work calendar and meetings</Text>
+                  <Text style={benefitTextStyle}>Your work calendar and meetings</Text>
                 </View>
-                <View style={styles.benefitItem}>
+                <View style={benefitItemStyle}>
                   <ArrowRight size={12} color="#4682B4" />
-                  <Text style={styles.benefitText}>Benefits expiration deadlines</Text>
+                  <Text style={benefitTextStyle}>Benefits expiration deadlines</Text>
                 </View>
-                <View style={styles.benefitItem}>
+                <View style={benefitItemStyle}>
                   <ArrowRight size={12} color="#4682B4" />
-                  <Text style={styles.benefitText}>Provider availability</Text>
+                  <Text style={benefitTextStyle}>Provider availability</Text>
                 </View>
-                <View style={styles.benefitItem}>
+                <View style={benefitItemStyle}>
                   <ArrowRight size={12} color="#4682B4" />
-                  <Text style={styles.benefitText}>Health score optimization</Text>
+                  <Text style={benefitTextStyle}>Health score optimization</Text>
                 </View>
               </View>
               
               <TouchableOpacity 
-                style={styles.actionButton}
+                style={actionButtonStyle}
                 onPress={() => {/* Navigate to care timeline */}}
               >
-                <Text style={styles.actionButtonText}>View Timeline</Text>
+                <Text style={actionButtonTextStyle}>View Timeline</Text>
               </TouchableOpacity>
             </View>
           )}
@@ -226,362 +569,60 @@ export default function EmployeeDashboard() {
         
         {/* Next Best Action */}
         {nextAction && (
-          <View style={styles.nextActionCard}>
-            <Text style={styles.nextActionTitle}>Recommended Next Action</Text>
-            <Text style={styles.nextActionText}>{nextAction.title}</Text>
-            <View style={styles.actionButtonContainer}>
+          <View style={nextActionCardStyle}>
+            <Text style={nextActionTitleStyle}>Recommended Next Action</Text>
+            <Text style={nextActionTextStyle}>{nextAction.title}</Text>
+            <View style={actionButtonContainerStyle}>
               <TouchableOpacity 
-                style={styles.actionButton}
+                style={actionButtonStyle}
                 onPress={() => {/* Take next action */}}
               >
-                <Text style={styles.actionButtonText}>{nextAction.actionText}</Text>
+                <Text style={actionButtonTextStyle}>{nextAction.actionText}</Text>
               </TouchableOpacity>
             </View>
           </View>
         )}
         
-        <Text style={styles.sectionTitle}>Quick Actions</Text>
-        <View style={styles.quickActionsContainer}>
+        <Text style={sectionTitleStyle}>Quick Actions</Text>
+        <View style={quickActionsContainerStyle}>
           <Link href="/employee/appointments/schedule" asChild>
-            <TouchableOpacity style={styles.quickAction}>
-              <Calendar style={styles.actionIcon} size={24} color="#4682B4" />
-              <Text style={styles.actionText}>Schedule Appointment</Text>
+            <TouchableOpacity style={quickActionStyle}>
+              <Calendar style={actionIconStyle} size={24} color="#4682B4" />
+              <Text style={actionTextStyle}>Schedule Appointment</Text>
             </TouchableOpacity>
           </Link>
           
           <Link href="/employee/appointments/checkups" asChild>
-            <TouchableOpacity style={styles.quickAction}>
-              <CheckCircle style={styles.actionIcon} size={24} color="#4682B4" />
-              <Text style={styles.actionText}>Checkup Timeline</Text>
+            <TouchableOpacity style={quickActionStyle}>
+              <CheckCircle style={actionIconStyle} size={24} color="#4682B4" />
+              <Text style={actionTextStyle}>Checkup Timeline</Text>
             </TouchableOpacity>
           </Link>
           
           <Link href="/employee/benefits/incentives" asChild>
-            <TouchableOpacity style={styles.quickAction}>
-              <Gift style={styles.actionIcon} size={24} color="#4682B4" />
-              <Text style={styles.actionText}>Redeem Rewards</Text>
+            <TouchableOpacity style={quickActionStyle}>
+              <Gift style={actionIconStyle} size={24} color="#4682B4" />
+              <Text style={actionTextStyle}>Redeem Rewards</Text>
             </TouchableOpacity>
           </Link>
           
           <Link href="/employee/features/tips" asChild>
-            <TouchableOpacity style={styles.quickAction}>
-              <FileText style={styles.actionIcon} size={24} color="#4682B4" />
-              <Text style={styles.actionText}>Wellness Tips</Text>
+            <TouchableOpacity style={quickActionStyle}>
+              <FileText style={actionIconStyle} size={24} color="#4682B4" />
+              <Text style={actionTextStyle}>Wellness Tips</Text>
             </TouchableOpacity>
           </Link>
         </View>
         
-        <Text style={styles.sectionTitle}>Health Goals</Text>
-        <View style={styles.goalsCard}>
-          <View style={styles.goalHeader}>
-            <Text style={styles.goalTitle}>Annual Checkup Progress</Text>
-            <Text style={styles.goalProgress}>2/4</Text>
+        <Text style={sectionTitleStyle}>Health Goals</Text>
+        <View style={goalsCardStyle}>
+          <View style={goalHeaderStyle}>
+            <Text style={goalTitleStyle}>Annual Checkup Progress</Text>
+            <Text style={goalProgressStyle}>2/4</Text>
           </View>
-          <ProgressBar progress={50} />
+          <ProgressBar progress={50} color="#4682B4" />
         </View>
       </ScrollView>
-      
-      {/* REMOVE THIS - Footer is handled by _layout.tsx */}
-      {/* <Footer 
-        activePath="home"
-        employee={true}
-      /> */}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5F7F9',
-  },
-  content: {
-    flex: 1,
-    padding: 16,
-  },
-  welcomeContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 24,
-  },
-  welcomeText: {
-    fontSize: 20,
-    fontWeight: '600',
-  },
-  subtitleText: {
-    fontSize: 14,
-    color: '#666',
-  },
-  card: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-  },
-  highlightedCard: {
-    borderColor: '#4682B4',
-    borderWidth: 2,
-    shadowColor: '#4682B4',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
-    elevation: 3,
-  },
-  cardContent: {
-    alignItems: 'center',
-  },
-  cardTitle: {
-    fontSize: 16,
-    fontWeight: '500',
-    marginBottom: 4,
-  },
-  scoreText: {
-    fontSize: 36,
-    fontWeight: 'bold',
-    color: '#4682B4',
-    marginVertical: 4,
-  },
-  trendText: {
-    fontSize: 12,
-    color: '#4CAF50',
-    marginBottom: 8,
-  },
-  scoreRange: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-    marginTop: 4,
-  },
-  rangeText: {
-    fontSize: 10,
-    color: '#666',
-  },
-  newFeatureBadge: {
-    backgroundColor: '#E6F0F9',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4,
-    alignSelf: 'flex-start',
-    marginBottom: 8,
-  },
-  newFeatureText: {
-    fontSize: 10,
-    color: '#4682B4',
-    fontWeight: '600',
-  },
-  featureDetail: {
-    backgroundColor: '#F0F7FF',
-    padding: 12,
-    borderRadius: 8,
-    marginTop: 12,
-  },
-  detailTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#4682B4',
-    marginBottom: 4,
-  },
-  detailText: {
-    fontSize: 12,
-    color: '#333',
-    marginBottom: 8,
-  },
-  categoriesContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 8,
-  },
-  category: {
-    alignItems: 'center',
-    flex: 1,
-  },
-  categoryTitle: {
-    fontSize: 10,
-    fontWeight: '500',
-    color: '#4682B4',
-    marginBottom: 2,
-  },
-  categoryValue: {
-    fontSize: 10,
-    color: '#333',
-  },
-  rowContainer: {
-    flexDirection: 'row',
-    marginBottom: 16,
-    gap: 8,
-  },
-  smallCard: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 12,
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-  },
-  smallCardContent: {
-    alignItems: 'center',
-  },
-  smallCardTitle: {
-    fontSize: 14,
-    fontWeight: '500',
-    textAlign: 'center',
-  },
-  smallSubtitle: {
-    fontSize: 10,
-    color: '#666',
-  },
-  savingsText: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#4CAF50',
-    marginVertical: 4,
-  },
-  appointmentDetail: {
-    fontSize: 12,
-    color: '#666',
-    marginTop: 4,
-  },
-  savingsBreakdown: {
-    marginTop: 8,
-  },
-  savingsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 4,
-  },
-  savingsLabel: {
-    fontSize: 10,
-    color: '#666',
-  },
-  savingsValue: {
-    fontSize: 10,
-    fontWeight: '600',
-    color: '#333',
-  },
-  infoCard: {
-    backgroundColor: '#E6F0F9',
-    borderRadius: 12,
-    padding: 12,
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: '#C9DEF0',
-  },
-  highlightedInfoCard: {
-    borderColor: '#4682B4',
-    borderWidth: 2,
-  },
-  infoContent: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-  },
-  infoIcon: {
-    marginRight: 8,
-    marginTop: 2,
-  },
-  infoText: {
-    flex: 1,
-    fontSize: 12,
-    color: '#4682B4',
-  },
-  benefitsList: {
-    marginTop: 8,
-  },
-  benefitItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 6,
-  },
-  benefitText: {
-    fontSize: 10,
-    color: '#333',
-    marginLeft: 6,
-  },
-  actionButton: {
-    backgroundColor: '#4682B4',
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 6,
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  actionButtonText: {
-    color: '#fff',
-    fontSize: 12,
-    fontWeight: '500',
-  },
-  nextActionCard: {
-    backgroundColor: '#FFFAEB',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: '#FFE082',
-  },
-  nextActionTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#F57C00',
-    marginBottom: 4,
-  },
-  nextActionText: {
-    fontSize: 12,
-    color: '#333',
-  },
-  actionButtonContainer: {
-    alignItems: 'flex-start',
-    marginTop: 8,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 12,
-  },
-  quickActionsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    marginBottom: 24,
-  },
-  quickAction: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
-    alignItems: 'center',
-    width: '48%',
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-  },
-  actionIcon: {
-    marginBottom: 8,
-  },
-  actionText: {
-    fontSize: 12,
-    fontWeight: '500',
-    textAlign: 'center',
-  },
-  goalsCard: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 24,
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-  },
-  goalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 8,
-  },
-  goalTitle: {
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  goalProgress: {
-    fontSize: 14,
-    color: '#4682B4',
-    fontWeight: '500',
-  },
-});

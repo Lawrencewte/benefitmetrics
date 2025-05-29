@@ -29,7 +29,7 @@ export default function NotificationsScreen() {
   if (!Array.isArray(notifications) || !markAsRead || !deleteNotification || !clearAllNotifications) {
     return (
       <View style={styles.container}>
-        <Header title="Notifications" />
+        <Header title="Notifications" showBackButton/>
         <View style={styles.loadingState}>
           <Text style={styles.loadingText}>Loading notifications...</Text>
         </View>

@@ -1,6 +1,9 @@
+import EmployerFooter from '@/src/components/Common/layout/EmployerFooter';
 import { AlertTriangle, Calendar, CheckCircle, Download, FileText, Lock, Shield } from 'lucide-react-native';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+
+
 
 interface ComplianceItem {
   id: string;
@@ -185,7 +188,7 @@ export default function CompliancePage() {
     .sort((a, b) => a.getTime() - b.getTime())[0];
 
   return (
-    <ScrollView style={styles.container}>
+    <><ScrollView style={styles.container}>
       <View style={styles.content}>
         {/* Header */}
         <View style={styles.header}>
@@ -398,8 +401,7 @@ export default function CompliancePage() {
                 onValueChange={(value) => setDataRetentionSettings(prev => ({
                   ...prev,
                   automaticDeletion: value
-                }))}
-              />
+                }))} />
             </View>
 
             <View style={styles.retentionItem}>
@@ -412,8 +414,7 @@ export default function CompliancePage() {
                 onValueChange={(value) => setDataRetentionSettings(prev => ({
                   ...prev,
                   anonymizationEnabled: value
-                }))}
-              />
+                }))} />
             </View>
           </View>
         </View>
@@ -421,7 +422,7 @@ export default function CompliancePage() {
         {/* Compliance Reports */}
         <View style={styles.reportsCard}>
           <Text style={styles.reportsTitle}>Compliance Reports</Text>
-          
+
           <View style={styles.reportsList}>
             <Pressable style={styles.reportItem}>
               <View style={styles.reportContent}>
@@ -473,7 +474,7 @@ export default function CompliancePage() {
           </View>
         </View>
       </View>
-    </ScrollView>
+    </ScrollView><EmployerFooter /></>
   );
 }
 

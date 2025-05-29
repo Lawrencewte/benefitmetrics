@@ -1,3 +1,4 @@
+import Footer from '@/src/components/Common/layout/Footer';
 import { Calendar, CheckSquare, Download, FileText, Heart, User } from 'lucide-react';
 import React, { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'; // Added TouchableOpacity and StyleSheet
@@ -235,6 +236,7 @@ export default function DataExport() {
           </View>
         </View>
       </ScrollView>
+      <Footer />
     </View>
   );
 }

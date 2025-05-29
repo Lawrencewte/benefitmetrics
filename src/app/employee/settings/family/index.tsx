@@ -1,3 +1,5 @@
+import Footer from '@/src/components/Common/layout/Footer';
+import Header from '@/src/components/Common/layout/Header';
 import { useRouter } from 'expo-router';
 import { Plus, UserCircle } from 'lucide-react-native';
 import React from 'react';
@@ -24,6 +26,7 @@ export default function FamilyOverview() {
 
   return (
     <View style={styles.container}>
+      <Header title="Family Health" showBackButton/>
       <ScrollView style={styles.content}>
         <View style={styles.header}>
           <Text style={styles.title}>Family Health</Text>
@@ -67,6 +70,7 @@ export default function FamilyOverview() {
           </View>
         )}
       </ScrollView>
+      <Footer />
     </View>
   );
 }

@@ -1,18 +1,20 @@
+import EmployerFooter from '@/src/components/Common/layout/EmployerFooter';
 import {
-    AlertTriangle,
-    Bell,
-    Building,
-    Check,
-    ChevronRight,
-    Database,
-    Globe,
-    HelpCircle,
-    Key,
-    Shield,
-    Users
+  AlertTriangle,
+  Bell,
+  Building,
+  Check,
+  ChevronRight,
+  Database,
+  Globe,
+  HelpCircle,
+  Key,
+  Shield,
+  Users
 } from 'lucide-react-native';
 import { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
 
 interface SettingsItem {
   id: string;
@@ -289,6 +291,7 @@ export default function SettingsOverview() {
           </View>
         </View>
       </ScrollView>
+      <EmployerFooter />
     </View>
   );
 }

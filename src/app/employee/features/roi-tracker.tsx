@@ -1,3 +1,4 @@
+import Footer from '@/src/components/Common/layout/Footer';
 import { Award, ChevronDown, ChevronUp, DollarSign, Info, TrendingUp } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -60,184 +61,187 @@ export default function ROITrackerPage() {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.content}>
-        {/* Header */}
-        <View style={styles.header}>
-          <Text style={styles.title}>ROI Tracker</Text>
-          <Text style={styles.subtitle}>
-            See the financial impact of your preventative healthcare
-          </Text>
-        </View>
-
-        {/* Total Savings Card */}
-        <View style={styles.savingsCard}>
-          <View style={styles.savingsHeader}>
-            <DollarSign size={24} color="white" />
-            <Text style={styles.savingsLabel}>Total Savings</Text>
-          </View>
-          <Text style={styles.savingsAmount}>${roiData.totalSavings.toLocaleString()}</Text>
-          <View style={styles.savingsTrend}>
-            <TrendingUp size={16} color="white" />
-            <Text style={styles.savingsTrendText}>
-              +${roiData.monthlyIncrease} this month
+    <View style={{ flex: 1 }}>
+      <ScrollView style={styles.container}>
+        <View style={styles.content}>
+          {/* Header */}
+          <View style={styles.header}>
+            <Text style={styles.title}>ROI Tracker</Text>
+            <Text style={styles.subtitle}>
+              See the financial impact of your preventative healthcare
             </Text>
           </View>
-        </View>
 
-        {/* Savings Breakdown */}
-        <View style={styles.card}>
-          <Pressable
-            onPress={() => toggleSection('breakdown')}
-            style={styles.cardHeader}
-          >
-            <Text style={styles.cardTitle}>Savings Breakdown</Text>
-            {expandedSection === 'breakdown' ? (
-              <ChevronUp size={20} color="#6B7280" />
-            ) : (
-              <ChevronDown size={20} color="#6B7280" />
-            )}
-          </Pressable>
-          
-          {expandedSection === 'breakdown' && (
-            <View style={styles.cardContent}>
-              {savingsBreakdown.map((item, index) => {
-                const isLast = index === savingsBreakdown.length - 1;
-                return (
-                  <View key={index} style={[styles.breakdownItem, isLast && styles.lastItem]}>
-                    <View style={styles.breakdownInfo}>
-                      <Text style={styles.breakdownCategory}>{item.category}</Text>
-                      <Text style={styles.breakdownDescription}>{item.description}</Text>
-                    </View>
-                    <Text style={styles.breakdownAmount}>${item.amount.toLocaleString()}</Text>
-                  </View>
-                );
-              })}
+          {/* Total Savings Card */}
+          <View style={styles.savingsCard}>
+            <View style={styles.savingsHeader}>
+              <DollarSign size={24} color="white" />
+              <Text style={styles.savingsLabel}>Total Savings</Text>
             </View>
-          )}
-        </View>
+            <Text style={styles.savingsAmount}>${roiData.totalSavings.toLocaleString()}</Text>
+            <View style={styles.savingsTrend}>
+              <TrendingUp size={16} color="white" />
+              <Text style={styles.savingsTrendText}>
+                +${roiData.monthlyIncrease} this month
+              </Text>
+            </View>
+          </View>
 
-        {/* This Year's Progress */}
-        <View style={styles.card}>
-          <View style={styles.cardContent}>
-            <Text style={styles.cardTitle}>This Year's Progress</Text>
+          {/* Savings Breakdown */}
+          <View style={styles.card}>
+            <Pressable
+              onPress={() => toggleSection('breakdown')}
+              style={styles.cardHeader}
+            >
+              <Text style={styles.cardTitle}>Savings Breakdown</Text>
+              {expandedSection === 'breakdown' ? (
+                <ChevronUp size={20} color="#6B7280" />
+              ) : (
+                <ChevronDown size={20} color="#6B7280" />
+              )}
+            </Pressable>
             
-            <View style={styles.progressSection}>
-              <View style={styles.progressItem}>
-                <View style={styles.progressHeader}>
-                  <Text style={styles.progressLabel}>Preventative Care Completed</Text>
-                  <Text style={styles.progressValue}>
-                    {roiData.completedCare}/{roiData.totalCareItems}
+            {expandedSection === 'breakdown' && (
+              <View style={styles.cardContent}>
+                {savingsBreakdown.map((item, index) => {
+                  const isLast = index === savingsBreakdown.length - 1;
+                  return (
+                    <View key={index} style={[styles.breakdownItem, isLast && styles.lastItem]}>
+                      <View style={styles.breakdownInfo}>
+                        <Text style={styles.breakdownCategory}>{item.category}</Text>
+                        <Text style={styles.breakdownDescription}>{item.description}</Text>
+                      </View>
+                      <Text style={styles.breakdownAmount}>${item.amount.toLocaleString()}</Text>
+                    </View>
+                  );
+                })}
+              </View>
+            )}
+          </View>
+
+          {/* This Year's Progress */}
+          <View style={styles.card}>
+            <View style={styles.cardContent}>
+              <Text style={styles.cardTitle}>This Year's Progress</Text>
+              
+              <View style={styles.progressSection}>
+                <View style={styles.progressItem}>
+                  <View style={styles.progressHeader}>
+                    <Text style={styles.progressLabel}>Preventative Care Completed</Text>
+                    <Text style={styles.progressValue}>
+                      {roiData.completedCare}/{roiData.totalCareItems}
+                    </Text>
+                  </View>
+                  <View style={styles.progressBar}>
+                    <View 
+                      style={[
+                        styles.progressFill,
+                        styles.progressBlue,
+                        { width: `${(roiData.completedCare / roiData.totalCareItems) * 100}%` }
+                      ]}
+                    />
+                  </View>
+                </View>
+
+                <View style={styles.progressItem}>
+                  <View style={styles.progressHeader}>
+                    <Text style={styles.progressLabel}>Insurance Benefits Used</Text>
+                    <Text style={styles.progressValue}>{roiData.benefitsUtilization}%</Text>
+                  </View>
+                  <View style={styles.progressBar}>
+                    <View 
+                      style={[
+                        styles.progressFill,
+                        styles.progressGreen,
+                        { width: `${roiData.benefitsUtilization}%` }
+                      ]}
+                    />
+                  </View>
+                </View>
+              </View>
+            </View>
+          </View>
+
+          {/* Projected Savings */}
+          <View style={styles.card}>
+            <Pressable
+              onPress={() => toggleSection('projected')}
+              style={styles.cardHeader}
+            >
+              <Text style={styles.cardTitle}>Projected Future Savings</Text>
+              {expandedSection === 'projected' ? (
+                <ChevronUp size={20} color="#6B7280" />
+              ) : (
+                <ChevronDown size={20} color="#6B7280" />
+              )}
+            </Pressable>
+            
+            {expandedSection === 'projected' && (
+              <View style={styles.cardContent}>
+                <View style={styles.projectedCard}>
+                  <Text style={styles.projectedLabel}>
+                    Complete remaining preventative care to unlock:
+                  </Text>
+                  <Text style={styles.projectedAmount}>
+                    ${projectedSavings.additionalSavings.toLocaleString()}
                   </Text>
                 </View>
-                <View style={styles.progressBar}>
-                  <View 
-                    style={[
-                      styles.progressFill,
-                      styles.progressBlue,
-                      { width: `${(roiData.completedCare / roiData.totalCareItems) * 100}%` }
-                    ]}
-                  />
-                </View>
+                
+                {projectedSavings.opportunities.map((opportunity, index) => {
+                  const isLast = index === projectedSavings.opportunities.length - 1;
+                  return (
+                    <View key={index} style={[styles.opportunityItem, isLast && styles.lastItem]}>
+                      <View style={styles.opportunityInfo}>
+                        <Text style={styles.opportunityAction}>{opportunity.action}</Text>
+                        <Text style={styles.opportunityTimeline}>{opportunity.timeline}</Text>
+                      </View>
+                      <Text style={styles.opportunitySavings}>+${opportunity.savings}</Text>
+                    </View>
+                  );
+                })}
               </View>
-
-              <View style={styles.progressItem}>
-                <View style={styles.progressHeader}>
-                  <Text style={styles.progressLabel}>Insurance Benefits Used</Text>
-                  <Text style={styles.progressValue}>{roiData.benefitsUtilization}%</Text>
-                </View>
-                <View style={styles.progressBar}>
-                  <View 
-                    style={[
-                      styles.progressFill,
-                      styles.progressGreen,
-                      { width: `${roiData.benefitsUtilization}%` }
-                    ]}
-                  />
-                </View>
-              </View>
-            </View>
-          </View>
-        </View>
-
-        {/* Projected Savings */}
-        <View style={styles.card}>
-          <Pressable
-            onPress={() => toggleSection('projected')}
-            style={styles.cardHeader}
-          >
-            <Text style={styles.cardTitle}>Projected Future Savings</Text>
-            {expandedSection === 'projected' ? (
-              <ChevronUp size={20} color="#6B7280" />
-            ) : (
-              <ChevronDown size={20} color="#6B7280" />
             )}
-          </Pressable>
-          
-          {expandedSection === 'projected' && (
+          </View>
+
+          {/* Company Comparison */}
+          <View style={styles.card}>
             <View style={styles.cardContent}>
-              <View style={styles.projectedCard}>
-                <Text style={styles.projectedLabel}>
-                  Complete remaining preventative care to unlock:
-                </Text>
-                <Text style={styles.projectedAmount}>
-                  ${projectedSavings.additionalSavings.toLocaleString()}
-                </Text>
+              <View style={styles.comparisonHeader}>
+                <Award size={20} color="#6B7280" />
+                <Text style={styles.cardTitle}>Company Comparison</Text>
               </View>
               
-              {projectedSavings.opportunities.map((opportunity, index) => {
-                const isLast = index === projectedSavings.opportunities.length - 1;
-                return (
-                  <View key={index} style={[styles.opportunityItem, isLast && styles.lastItem]}>
-                    <View style={styles.opportunityInfo}>
-                      <Text style={styles.opportunityAction}>{opportunity.action}</Text>
-                      <Text style={styles.opportunityTimeline}>{opportunity.timeline}</Text>
-                    </View>
-                    <Text style={styles.opportunitySavings}>+${opportunity.savings}</Text>
-                  </View>
-                );
-              })}
+              <View style={styles.comparisonCard}>
+                <Text style={styles.comparisonSubtitle}>
+                  Your savings vs. company average
+                </Text>
+                <Text style={styles.comparisonPercentage}>
+                  +{roiData.companyComparison}% above average
+                </Text>
+                <Text style={styles.comparisonNote}>
+                  You're in the top {roiData.percentile}% of employees
+                </Text>
+              </View>
             </View>
-          )}
-        </View>
+          </View>
 
-        {/* Company Comparison */}
-        <View style={styles.card}>
-          <View style={styles.cardContent}>
-            <View style={styles.comparisonHeader}>
-              <Award size={20} color="#6B7280" />
-              <Text style={styles.cardTitle}>Company Comparison</Text>
-            </View>
-            
-            <View style={styles.comparisonCard}>
-              <Text style={styles.comparisonSubtitle}>
-                Your savings vs. company average
-              </Text>
-              <Text style={styles.comparisonPercentage}>
-                +{roiData.companyComparison}% above average
-              </Text>
-              <Text style={styles.comparisonNote}>
-                You're in the top {roiData.percentile}% of employees
-              </Text>
+          {/* Info Footer */}
+          <View style={styles.infoCard}>
+            <View style={styles.infoContent}>
+              <Info size={16} color="#3B82F6" style={styles.infoIcon} />
+              <View style={styles.infoTextContainer}>
+                <Text style={styles.infoText}>
+                  ROI calculations include direct cost savings, premium discounts, 
+                  and estimated future healthcare cost avoidance through early detection 
+                  and prevention.
+                </Text>
+              </View>
             </View>
           </View>
         </View>
-
-        {/* Info Footer */}
-        <View style={styles.infoCard}>
-          <View style={styles.infoContent}>
-            <Info size={16} color="#3B82F6" style={styles.infoIcon} />
-            <View style={styles.infoTextContainer}>
-              <Text style={styles.infoText}>
-                ROI calculations include direct cost savings, premium discounts, 
-                and estimated future healthcare cost avoidance through early detection 
-                and prevention.
-              </Text>
-            </View>
-          </View>
-        </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+      <Footer />
+    </View>
   );
 }
 

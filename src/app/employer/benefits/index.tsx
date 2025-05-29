@@ -1,3 +1,4 @@
+import EmployerFooter from '@/src/components/Common/layout/EmployerFooter';
 import { AlertCircle, DollarSign, Settings, Shield, TrendingUp, Users } from 'lucide-react-native';
 import { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -306,6 +307,7 @@ export default function BenefitsOverview() {
         {selectedTab === 'plans' && renderPlans()}
         {selectedTab === 'analytics' && renderAnalytics()}
       </ScrollView>
+      <EmployerFooter />
     </View>
   );
 }

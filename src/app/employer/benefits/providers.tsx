@@ -1,6 +1,8 @@
+import EmployerFooter from '@/src/components/Common/layout/EmployerFooter';
 import { Edit, Filter, MapPin, Phone, Plus, Search, Star } from 'lucide-react-native';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+
 
 interface Provider {
   id: string;
@@ -203,7 +205,7 @@ export default function ProvidersPage() {
   const totalUsage = providers.reduce((sum, p) => sum + p.employeeUsage.totalAppointments, 0);
 
   return (
-    <ScrollView style={styles.container}>
+    <><ScrollView style={styles.container}>
       <View style={styles.content}>
         {/* Header */}
         <View style={styles.header}>
@@ -247,8 +249,7 @@ export default function ProvidersPage() {
               value={searchQuery}
               onChangeText={setSearchQuery}
               placeholder="Search providers, specialties, locations..."
-              style={styles.searchInput}
-            />
+              style={styles.searchInput} />
             <Pressable
               onPress={() => setShowFilters(!showFilters)}
               style={styles.filterButton}
@@ -315,7 +316,7 @@ export default function ProvidersPage() {
           {filteredProviders.map((provider) => {
             const networkStyle = getNetworkBadgeStyle(provider.networkStatus);
             const typeStyle = getTypeStyle(provider.type);
-            
+
             return (
               <View key={provider.id} style={styles.providerCard}>
                 {/* Provider Header */}
@@ -336,7 +337,7 @@ export default function ProvidersPage() {
                       </Text>
                     </View>
                   </View>
-                  
+
                   <Pressable style={styles.editButton}>
                     <Edit size={20} color="#6B7280" />
                   </Pressable>
@@ -368,7 +369,7 @@ export default function ProvidersPage() {
                     <Text style={styles.ratingValue}>{provider.rating}</Text>
                     <Text style={styles.reviewCount}>({provider.reviewCount} reviews)</Text>
                   </View>
-                  
+
                   <View style={[
                     styles.statusBadge,
                     provider.acceptingNewPatients ? styles.acceptingBadge : styles.notAcceptingBadge
@@ -413,7 +414,7 @@ export default function ProvidersPage() {
                       ))}
                     </View>
                   </View>
-                  
+
                   <View style={styles.detailGroup}>
                     <Text style={styles.detailLabel}>Languages</Text>
                     <View style={styles.tagContainer}>
@@ -463,7 +464,7 @@ export default function ProvidersPage() {
           </View>
         </View>
       </View>
-    </ScrollView>
+    </ScrollView><EmployerFooter /></>
   );
 }
 

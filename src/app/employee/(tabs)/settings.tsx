@@ -1,17 +1,14 @@
 import { Link } from 'expo-router';
 import {
-    Bell,
-    ChevronRight,
-    Database,
-    Download,
-    Heart,
-    Link as LinkIcon,
-    Lock,
-    Pill,
-    Shield,
-    User,
-    UserCheck,
-    Users
+  Bell,
+  ChevronRight,
+  Database,
+  Download,
+  Link as LinkIcon,
+  Shield,
+  User,
+  UserCheck,
+  Users
 } from 'lucide-react-native';
 import React from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -57,45 +54,8 @@ export default function SettingsTab() {
         }
       ]
     },
-    {
-      id: 'health',
-      title: 'Health Information',
-      icon: <Heart size={20} color="#4682B4" />,
-      items: [
-        {
-          id: 'health-info',
-          title: 'Health Information',
-          subtitle: 'Basic health details and conditions',
-          icon: <Heart size={20} color="#666" />,
-          href: '/employee/settings/profile/health-info',
-          showChevron: true
-        },
-        {
-          id: 'family-history',
-          title: 'Family Medical History',
-          subtitle: 'Family health history and genetic information',
-          icon: <Users size={20} color="#666" />,
-          href: '/employee/settings/profile/family-history',
-          showChevron: true
-        },
-        {
-          id: 'medications',
-          title: 'Medications & Supplements',
-          subtitle: 'Current medications and supplements',
-          icon: <Pill size={20} color="#666" />,
-          href: '/employee/settings/profile/medications',
-          showChevron: true
-        },
-        {
-          id: 'privacy-health',
-          title: 'Health Privacy Settings',
-          subtitle: 'Control health data sharing preferences',
-          icon: <Lock size={20} color="#666" />,
-          href: '/employee/settings/profile/privacy',
-          showChevron: true
-        }
-      ]
-    },
+   
+    
     {
       id: 'family',
       title: 'Family Members',

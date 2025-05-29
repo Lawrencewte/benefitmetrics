@@ -13,7 +13,7 @@ export default function ProfileScreen() {
   
   return (
     <View style={styles.container}>
-      <Header title="Profile" />
+      <Header title="Profile" showBackButton/>
       
       <ScrollView style={styles.content}>
         <View style={styles.profileHeader}>

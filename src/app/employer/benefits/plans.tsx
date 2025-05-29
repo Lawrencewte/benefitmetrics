@@ -1,6 +1,8 @@
+import EmployerFooter from '@/src/components/Common/layout/EmployerFooter';
 import { DollarSign, Edit, Eye, Heart, Plus, Shield, Sparkles, Users } from 'lucide-react-native';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+
 
 interface BenefitsPlan {
   id: string;
@@ -210,7 +212,7 @@ export default function PlansPage() {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <><ScrollView style={styles.container}>
       <View style={styles.content}>
         {/* Header */}
         <View style={styles.header}>
@@ -308,14 +310,13 @@ export default function PlansPage() {
                   </View>
                   <Text style={styles.planProvider}>{plan.provider}</Text>
                 </View>
-                
+
                 <View style={styles.planControls}>
                   <View style={styles.switchContainer}>
                     <Text style={styles.switchLabel}>Active</Text>
                     <Switch
                       value={plan.isActive}
-                      onValueChange={() => togglePlanStatus(plan.id)}
-                    />
+                      onValueChange={() => togglePlanStatus(plan.id)} />
                   </View>
                   <Pressable style={styles.editButton}>
                     <Edit size={20} color="#6B7280" />
@@ -375,9 +376,8 @@ export default function PlansPage() {
                         <Text style={styles.coveragePercentage}>{percentage}%</Text>
                       </View>
                       <View style={styles.progressBar}>
-                        <View 
-                          style={[styles.progressFill, { width: `${percentage}%` }]}
-                        />
+                        <View
+                          style={[styles.progressFill, { width: `${percentage}%` }]} />
                       </View>
                     </View>
                   ))}
@@ -462,7 +462,7 @@ export default function PlansPage() {
           </View>
         </View>
       </View>
-    </ScrollView>
+    </ScrollView><EmployerFooter /></>
   );
 }
 

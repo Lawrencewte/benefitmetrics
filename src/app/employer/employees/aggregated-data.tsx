@@ -1,6 +1,8 @@
+import EmployerFooter from '@/src/components/Common/layout/EmployerFooter';
 import { BarChart3, Download, PieChart, RefreshCw, TrendingUp, Users } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
 
 interface AggregatedData {
   totalEmployees: number;
@@ -444,6 +446,7 @@ export default function AggregatedDataPage() {
           </Text>
         </View>
       </ScrollView>
+      <EmployerFooter />
     </SafeAreaView>
   );
 }

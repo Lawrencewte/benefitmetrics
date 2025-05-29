@@ -6,6 +6,7 @@ import {
   Bell,
   Building,
   CheckCircle,
+  CreditCard,
   Database,
   Download,
   FileText,
@@ -16,6 +17,7 @@ import {
   Phone,
   Puzzle,
   Shield,
+  TrendingUp,
   User,
   Users
 } from 'lucide-react';
@@ -73,6 +75,46 @@ const MoreHub = () => {
       icon: Database,
       route: '/employer/settings/data-retention',
       items: ['Data Retention', 'Privacy Controls', 'Export Data', 'Anonymization'],
+      color: '#f59e0b'
+    }
+  ];
+
+  // NEW: Benefits Management Section
+  const benefitsCategories = [
+    {
+      id: 'benefits-overview',
+      title: 'Benefits Overview',
+      description: 'View and manage all employee benefits programs',
+      icon: CreditCard,
+      route: '/employer/benefits',
+      items: ['Plan Summary', 'Coverage Details', 'Utilization Reports', 'Cost Analysis'],
+      color: '#06b6d4'
+    },
+    {
+      id: 'benefits-optimization',
+      title: 'Benefits Optimization',
+      description: 'Optimize benefits utilization and identify cost savings',
+      icon: TrendingUp,
+      route: '/employer/benefits/optimization',
+      items: ['Utilization Analysis', 'Cost Optimization', 'ROI Reports', 'Recommendations'],
+      color: '#10b981'
+    },
+    {
+      id: 'benefits-plans',
+      title: 'Plan Management',
+      description: 'Configure and manage health insurance plans',
+      icon: FileText,
+      route: '/employer/benefits/plans',
+      items: ['Health Plans', 'Dental Plans', 'Vision Plans', 'Wellness Programs'],
+      color: '#8b5cf6'
+    },
+    {
+      id: 'benefits-providers',
+      title: 'Provider Network',
+      description: 'Manage healthcare provider networks and directories',
+      icon: Users,
+      route: '/employer/benefits/providers',
+      items: ['Provider Directory', 'Network Management', 'Quality Ratings', 'Contract Terms'],
       color: '#f59e0b'
     }
   ];
@@ -166,6 +208,45 @@ const MoreHub = () => {
     }
   };
 
+  const renderCategorySection = (categories, sectionTitle) => (
+    <View style={styles.categorySection}>
+      <Text style={styles.sectionTitle}>{sectionTitle}</Text>
+      
+      {categories.map((category) => {
+        const IconComponent = category.icon;
+        
+        return (
+          <TouchableOpacity
+            key={category.id}
+            onPress={() => navigateToSection(category.route)}
+            style={styles.categoryCard}
+          >
+            <Card>
+              <View style={styles.categoryHeader}>
+                <View style={[styles.categoryIcon, { backgroundColor: `${category.color}20` }]}>
+                  <IconComponent size={24} color={category.color} />
+                </View>
+                <View style={styles.categoryInfo}>
+                  <Text style={styles.categoryTitle}>{category.title}</Text>
+                  <Text style={styles.categoryDescription}>{category.description}</Text>
+                </View>
+                <ArrowRight size={20} color="#666" />
+              </View>
+              
+              <View style={styles.categoryItems}>
+                {category.items.map((item, index) => (
+                  <Text key={index} style={styles.categoryItem}>
+                    • {item}
+                  </Text>
+                ))}
+              </View>
+            </Card>
+          </TouchableOpacity>
+        );
+      })}
+    </View>
+  );
+
   return (
     <View style={styles.container}>
       <Header title="More" />
@@ -174,7 +255,7 @@ const MoreHub = () => {
         <View style={styles.headerSection}>
           <Text style={styles.pageTitle}>Settings & More</Text>
           <Text style={styles.pageSubtitle}>
-            Manage system settings, compliance, and account preferences
+            Manage system settings, benefits, compliance, and account preferences
           </Text>
         </View>
 
@@ -273,41 +354,11 @@ const MoreHub = () => {
           </View>
         </Card>
 
+        {/* Benefits Management Section */}
+        {renderCategorySection(benefitsCategories, "Benefits Management")}
+
         {/* Settings Categories */}
-        <Text style={styles.sectionTitle}>Settings</Text>
-        
-        {settingsCategories.map((category) => {
-          const IconComponent = category.icon;
-          
-          return (
-            <TouchableOpacity
-              key={category.id}
-              onPress={() => navigateToSection(category.route)}
-              style={styles.categoryCard}
-            >
-              <Card>
-                <View style={styles.categoryHeader}>
-                  <View style={[styles.categoryIcon, { backgroundColor: `${category.color}20` }]}>
-                    <IconComponent size={24} color={category.color} />
-                  </View>
-                  <View style={styles.categoryInfo}>
-                    <Text style={styles.categoryTitle}>{category.title}</Text>
-                    <Text style={styles.categoryDescription}>{category.description}</Text>
-                  </View>
-                  <ArrowRight size={20} color="#666" />
-                </View>
-                
-                <View style={styles.categoryItems}>
-                  {category.items.map((item, index) => (
-                    <Text key={index} style={styles.categoryItem}>
-                      • {item}
-                    </Text>
-                  ))}
-                </View>
-              </Card>
-            </TouchableOpacity>
-          );
-        })}
+        {renderCategorySection(settingsCategories, "System Settings")}
 
         {/* Quick Actions */}
         <View style={styles.quickActionsSection}>
@@ -407,8 +458,8 @@ const MoreHub = () => {
 
         {/* App Info */}
         <View style={styles.appInfo}>
-          <Text style={styles.appInfoText}>HealthAhead v2.1.0</Text>
-          <Text style={styles.appInfoText}>© 2025 HealthAhead Technologies</Text>
+          <Text style={styles.appInfoText}>BenefitMetrics v2.1.0</Text>
+          <Text style={styles.appInfoText}>© 2025 BenefitMetrics Technologies</Text>
         </View>
       </ScrollView>
       
@@ -443,6 +494,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 16,
+  },
+  categorySection: {
+    marginBottom: 24,
   },
   accountCard: {
     marginBottom: 20,

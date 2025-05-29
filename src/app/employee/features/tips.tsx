@@ -126,7 +126,7 @@ export default function TipsScreen() {
   
   return (
     <View style={styles.container}>
-      <Header title="Wellness Tips" />
+      <Header title="Wellness Tips" showBackButton/>
       
       <ScrollView 
         horizontal

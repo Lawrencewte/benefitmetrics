@@ -1,16 +1,16 @@
 // src/app/employer/(tabs)/communications.tsx
 import { useRouter } from 'expo-router';
 import {
-    ArrowRight,
-    Clock,
-    Eye,
-    FileText,
-    Megaphone,
-    Plus,
-    Send,
-    Target,
-    TrendingUp,
-    Users
+  ArrowRight,
+  Clock,
+  Eye,
+  FileText,
+  Megaphone,
+  Plus,
+  Send,
+  Target,
+  TrendingUp,
+  Users
 } from 'lucide-react';
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';

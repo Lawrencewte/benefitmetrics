@@ -1,3 +1,4 @@
+import Footer from '@/src/components/Common/layout/Footer';
 import React, { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import Header from '../../../components/Common/layout/Header';
@@ -263,7 +264,9 @@ export default function AccountSettings() {
           />
         </View>
       </ScrollView>
+      <Footer />
     </View>
+    
   );
 }
 

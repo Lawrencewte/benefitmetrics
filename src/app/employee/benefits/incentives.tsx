@@ -126,7 +126,7 @@ export default function IncentivesScreen() {
   
   return (
     <View style={styles.container}>
-      <Header title="Rewards" />
+      <Header title="Rewards" showBackButton/>
       
       <View style={styles.pointsContainer}>
         <PointsDisplay points={user?.points || 0} showLabel={true} />

@@ -1,3 +1,4 @@
+import EmployerFooter from '@/src/components/Common/layout/EmployerFooter';
 import {
   AlertCircle,
   Building,
@@ -21,6 +22,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+
+
 
 interface Integration {
   id: string;
@@ -379,6 +382,7 @@ export default function IntegrationsSettings() {
           </View>
         </View>
       </Modal>
+      <EmployerFooter />
     </SafeAreaView>
   );
 }

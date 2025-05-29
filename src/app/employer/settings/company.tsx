@@ -1,6 +1,8 @@
+import EmployerFooter from '@/src/components/Common/layout/EmployerFooter';
 import { Building, Edit3, MapPin, Plus, Save, Trash2, Users, X } from 'lucide-react-native';
 import { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+
 
 interface CompanyInfo {
   name: string;
@@ -513,6 +515,7 @@ export default function CompanySettings() {
         {activeTab === 'departments' && renderDepartments()}
         {activeTab === 'locations' && renderLocations()}
       </ScrollView>
+      <EmployerFooter />
     </View>
   );
 }

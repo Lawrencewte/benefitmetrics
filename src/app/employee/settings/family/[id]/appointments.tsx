@@ -1,8 +1,10 @@
 // Fixed: Use Expo Router instead of React Navigation
+import Footer from '@/src/components/Common/layout/Footer';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Plus } from 'lucide-react-native';
 import React, { useEffect } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
 
 // Fixed: Correct import paths for this deep nested file
 // From settings/family/[id]/appointments.tsx, need to go up 6 levels to reach src/
@@ -93,6 +95,7 @@ export default function FamilyMemberAppointments() {
           </View>
         )}
       </ScrollView>
+      <Footer />
     </View>
   );
 }

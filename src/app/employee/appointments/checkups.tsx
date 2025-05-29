@@ -166,6 +166,14 @@ export default function CheckupsScreen() {
     }
   };
   
+  // Handle tab press for Footer navigation
+  const handleTabPress = (tabKey: string) => {
+    // Implement navigation logic here, e.g. using router.push or navigation.navigate
+    // Example: router.push(`/employee/${tabKey}`);
+    // For now, just log the tab key
+    console.log('Tab pressed:', tabKey);
+  };
+
   return (
     <View style={styles.container}>
       <Header title="Checkup Timeline" showBackButton />

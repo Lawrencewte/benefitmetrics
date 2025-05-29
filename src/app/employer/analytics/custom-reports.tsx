@@ -1,6 +1,6 @@
 import { Calendar, Filter } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import EmployerFooter from '../../../components/Common/layout/EmployerFooter';
 import Header from '../../../components/Common/layout/Header';
 import Button from '../../../components/Common/ui/Button';
@@ -120,11 +120,351 @@ const CustomReports = () => {
     console.log(`Exporting report ${reportId}...`);
   };
 
+  // Define inline styles for React Native Web compatibility
+  const containerStyle = {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+  };
+
+  const scrollContainerStyle = {
+    flex: 1,
+    padding: 16,
+  };
+
+  const loadingContainerStyle = {
+    flex: 1,
+    justifyContent: 'center' as const,
+    alignItems: 'center' as const,
+  };
+
+  const errorContainerStyle = {
+    flex: 1,
+    justifyContent: 'center' as const,
+    alignItems: 'center' as const,
+    padding: 20,
+  };
+
+  const errorTextStyle = {
+    color: 'red',
+    marginBottom: 20,
+    textAlign: 'center' as const,
+  };
+
+  const headerContainerStyle = {
+    flexDirection: 'row' as const,
+    justifyContent: 'space-between' as const,
+    alignItems: 'flex-start' as const,
+    marginBottom: 20,
+  };
+
+  const headerTextStyle = {
+    flex: 1,
+  };
+
+  const pageTitleStyle = {
+    fontSize: 24,
+    fontWeight: 'bold' as const,
+    color: '#333',
+  };
+
+  const pageSubtitleStyle = {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 4,
+  };
+
+  const newReportButtonStyle = {
+    minWidth: 120,
+  };
+
+  const tabContainerStyle = {
+    flexDirection: 'row' as const,
+    marginBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e5e7eb',
+  };
+
+  const tabButtonStyle = {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    marginRight: 8,
+  };
+
+  const activeTabButtonStyle = {
+    borderBottomWidth: 2,
+    borderBottomColor: '#3b82f6',
+  };
+
+  const tabTextStyle = {
+    fontSize: 16,
+    color: '#666',
+  };
+
+  const activeTabTextStyle = {
+    fontWeight: 'bold' as const,
+    color: '#3b82f6',
+  };
+
+  const searchContainerStyle = {
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    marginBottom: 16,
+    paddingHorizontal: 12,
+  };
+
+  const searchInputStyle = {
+    flex: 1,
+    padding: 8,
+    backgroundColor: '#fff',
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+  };
+
+  const filterContainerStyle = {
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    marginLeft: 12,
+    gap: 4,
+  };
+
+  const filterTextStyle = {
+    fontSize: 14,
+    color: '#666',
+  };
+
+  const templateCardStyle = {
+    marginBottom: 16,
+    padding: 16,
+  };
+
+  const templateHeaderStyle = {
+    flexDirection: 'row' as const,
+    justifyContent: 'space-between' as const,
+    alignItems: 'center' as const,
+    marginBottom: 8,
+  };
+
+  const templateNameStyle = {
+    fontSize: 18,
+    fontWeight: 'bold' as const,
+    color: '#333',
+    flex: 1,
+  };
+
+  const lastUpdatedContainerStyle = {
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    gap: 4,
+  };
+
+  const lastUpdatedTextStyle = {
+    fontSize: 12,
+    color: '#666',
+  };
+
+  const templateDescriptionStyle = {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 12,
+  };
+
+  const metricsContainerStyle = {
+    marginBottom: 16,
+  };
+
+  const metricsLabelStyle = {
+    fontSize: 14,
+    fontWeight: 'bold' as const,
+    marginBottom: 8,
+    color: '#333',
+  };
+
+  const metricsListStyle = {
+    flexDirection: 'row' as const,
+    flexWrap: 'wrap' as const,
+    gap: 8,
+  };
+
+  const metricBadgeStyle = {
+    backgroundColor: '#e0f2fe',
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 16,
+  };
+
+  const metricTextStyle = {
+    fontSize: 12,
+    color: '#0284c7',
+  };
+
+  const templateActionsStyle = {
+    flexDirection: 'row' as const,
+    justifyContent: 'flex-end' as const,
+    gap: 8,
+  };
+
+  const actionButtonStyle = {
+    minWidth: 100,
+  };
+
+  const reportCardStyle = {
+    marginBottom: 16,
+    padding: 16,
+  };
+
+  const reportHeaderStyle = {
+    flexDirection: 'row' as const,
+    justifyContent: 'space-between' as const,
+    alignItems: 'center' as const,
+    marginBottom: 8,
+  };
+
+  const reportNameStyle = {
+    fontSize: 18,
+    fontWeight: 'bold' as const,
+    color: '#333',
+    flex: 1,
+  };
+
+  const scheduleBadgeStyle = {
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    backgroundColor: '#dbeafe',
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 16,
+    gap: 4,
+  };
+
+  const scheduleTextStyle = {
+    fontSize: 12,
+    color: '#3b82f6',
+  };
+
+  const reportDescriptionStyle = {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 8,
+  };
+
+  const reportDateStyle = {
+    fontSize: 12,
+    color: '#666',
+    marginBottom: 12,
+  };
+
+  const reportActionsStyle = {
+    flexDirection: 'row' as const,
+    justifyContent: 'flex-start' as const,
+    gap: 8,
+  };
+
+  const reportActionButtonStyle = {
+    minWidth: 80,
+  };
+
+  const modalContentStyle = {
+    padding: 16,
+  };
+
+  const formGroupStyle = {
+    marginBottom: 16,
+  };
+
+  const formLabelStyle = {
+    fontSize: 14,
+    fontWeight: 'bold' as const,
+    marginBottom: 8,
+    color: '#333',
+  };
+
+  const formInputStyle = {
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+    borderRadius: 4,
+    backgroundColor: '#fff',
+  };
+
+  const textAreaStyle = {
+    height: 100,
+    textAlignVertical: 'top' as const,
+  };
+
+  const metricOptionsStyle = {
+    gap: 8,
+  };
+
+  const metricOptionStyle = {
+    flexDirection: 'row' as const,
+    alignItems: 'center' as const,
+    padding: 12,
+    backgroundColor: '#f9fafb',
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+  };
+
+  const checkboxStyle = {
+    width: 16,
+    height: 16,
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    borderRadius: 2,
+    marginRight: 12,
+  };
+
+  const metricOptionTextStyle = {
+    fontSize: 14,
+    color: '#374151',
+  };
+
+  const scheduleOptionsStyle = {
+    flexDirection: 'row' as const,
+    flexWrap: 'wrap' as const,
+    gap: 8,
+  };
+
+  const scheduleOptionStyle = {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+    borderRadius: 6,
+    backgroundColor: '#fff',
+  };
+
+  const selectedScheduleOptionStyle = {
+    backgroundColor: '#3b82f6',
+    borderColor: '#3b82f6',
+  };
+
+  const scheduleOptionTextStyle = {
+    fontSize: 14,
+    color: '#374151',
+  };
+
+  const selectedScheduleOptionTextStyle = {
+    color: 'white',
+  };
+
+  const modalActionsStyle = {
+    flexDirection: 'row' as const,
+    justifyContent: 'flex-end' as const,
+    marginTop: 20,
+    gap: 8,
+  };
+
+  const modalButtonStyle = {
+    minWidth: 120,
+  };
+
   if (isLoading) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={containerStyle}>
         <Header title="Custom Reports" />
-        <View style={styles.loadingContainer}>
+        <View style={loadingContainerStyle}>
           <Text>Loading report data...</Text>
         </View>
         <EmployerFooter />
@@ -134,10 +474,10 @@ const CustomReports = () => {
 
   if (error) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={containerStyle}>
         <Header title="Custom Reports" />
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>{error}</Text>
+        <View style={errorContainerStyle}>
+          <Text style={errorTextStyle}>{error}</Text>
           <Button title="Retry" onPress={() => setError(null)} />
         </View>
         <EmployerFooter />
@@ -146,13 +486,13 @@ const CustomReports = () => {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={containerStyle}>
       <Header title="Custom Reports" />
-      <ScrollView style={styles.scrollContainer}>
-        <View style={styles.headerContainer}>
-          <View style={styles.headerText}>
-            <Text style={styles.pageTitle}>Report Builder</Text>
-            <Text style={styles.pageSubtitle}>
+      <ScrollView style={scrollContainerStyle}>
+        <View style={headerContainerStyle}>
+          <View style={headerTextStyle}>
+            <Text style={pageTitleStyle}>Report Builder</Text>
+            <Text style={pageSubtitleStyle}>
               Create and manage custom reports for your organization's health metrics
             </Text>
           </View>
@@ -160,22 +500,22 @@ const CustomReports = () => {
             title="New Report" 
             onPress={handleCreateNewReport}
             variant="primary"
-            style={styles.newReportButton}
+            style={newReportButtonStyle}
           />
         </View>
 
-        <View style={styles.tabContainer}>
+        <View style={tabContainerStyle}>
           <TouchableOpacity 
             style={[
-              styles.tabButton, 
-              activeTab === 'templates' && styles.activeTabButton
+              tabButtonStyle, 
+              activeTab === 'templates' && activeTabButtonStyle
             ]}
             onPress={() => setActiveTab('templates')}
           >
             <Text 
               style={[
-                styles.tabText,
-                activeTab === 'templates' && styles.activeTabText
+                tabTextStyle,
+                activeTab === 'templates' && activeTabTextStyle
               ]}
             >
               Report Templates
@@ -183,15 +523,15 @@ const CustomReports = () => {
           </TouchableOpacity>
           <TouchableOpacity 
             style={[
-              styles.tabButton, 
-              activeTab === 'saved' && styles.activeTabButton
+              tabButtonStyle, 
+              activeTab === 'saved' && activeTabButtonStyle
             ]}
             onPress={() => setActiveTab('saved')}
           >
             <Text 
               style={[
-                styles.tabText,
-                activeTab === 'saved' && styles.activeTabText
+                tabTextStyle,
+                activeTab === 'saved' && activeTabTextStyle
               ]}
             >
               Saved Reports
@@ -201,53 +541,53 @@ const CustomReports = () => {
 
         {activeTab === 'templates' && (
           <View>
-            <Card style={styles.searchContainer}>
+            <Card style={searchContainerStyle}>
               <TextInput
-                style={styles.searchInput}
+                style={searchInputStyle}
                 placeholder="Search templates..."
               />
-              <View style={styles.filterContainer}>
+              <View style={filterContainerStyle}>
                 <Filter size={16} color="#666" />
-                <Text style={styles.filterText}>Filter</Text>
+                <Text style={filterTextStyle}>Filter</Text>
               </View>
             </Card>
 
             {reportTemplates.map(template => (
-              <Card key={template.id} style={styles.templateCard}>
-                <View style={styles.templateHeader}>
-                  <Text style={styles.templateName}>{template.name}</Text>
-                  <View style={styles.lastUpdatedContainer}>
+              <Card key={template.id} style={templateCardStyle}>
+                <View style={templateHeaderStyle}>
+                  <Text style={templateNameStyle}>{template.name}</Text>
+                  <View style={lastUpdatedContainerStyle}>
                     <Calendar size={14} color="#666" />
-                    <Text style={styles.lastUpdatedText}>
+                    <Text style={lastUpdatedTextStyle}>
                       Updated: {template.lastUpdated}
                     </Text>
                   </View>
                 </View>
-                <Text style={styles.templateDescription}>
+                <Text style={templateDescriptionStyle}>
                   {template.description}
                 </Text>
-                <View style={styles.metricsContainer}>
-                  <Text style={styles.metricsLabel}>Included metrics:</Text>
-                  <View style={styles.metricsList}>
+                <View style={metricsContainerStyle}>
+                  <Text style={metricsLabelStyle}>Included metrics:</Text>
+                  <View style={metricsListStyle}>
                     {template.metrics.map((metric, index) => (
-                      <View key={index} style={styles.metricBadge}>
-                        <Text style={styles.metricText}>{metric}</Text>
+                      <View key={index} style={metricBadgeStyle}>
+                        <Text style={metricTextStyle}>{metric}</Text>
                       </View>
                     ))}
                   </View>
                 </View>
-                <View style={styles.templateActions}>
+                <View style={templateActionsStyle}>
                   <Button
                     title="Use Template"
                     variant="primary"
                     onPress={() => console.log(`Using template ${template.id}`)}
-                    style={styles.actionButton}
+                    style={actionButtonStyle}
                   />
                   <Button
                     title="Customize"
                     variant="outline"
                     onPress={() => console.log(`Customizing template ${template.id}`)}
-                    style={styles.actionButton}
+                    style={actionButtonStyle}
                   />
                 </View>
               </Card>
@@ -257,54 +597,54 @@ const CustomReports = () => {
 
         {activeTab === 'saved' && (
           <View>
-            <Card style={styles.searchContainer}>
+            <Card style={searchContainerStyle}>
               <TextInput
-                style={styles.searchInput}
+                style={searchInputStyle}
                 placeholder="Search saved reports..."
               />
-              <View style={styles.filterContainer}>
+              <View style={filterContainerStyle}>
                 <Filter size={16} color="#666" />
-                <Text style={styles.filterText}>Filter</Text>
+                <Text style={filterTextStyle}>Filter</Text>
               </View>
             </Card>
 
             {savedReports.map(report => (
-              <Card key={report.id} style={styles.reportCard}>
-                <View style={styles.reportHeader}>
-                  <Text style={styles.reportName}>{report.name}</Text>
+              <Card key={report.id} style={reportCardStyle}>
+                <View style={reportHeaderStyle}>
+                  <Text style={reportNameStyle}>{report.name}</Text>
                   {report.scheduled && (
-                    <View style={styles.scheduleBadge}>
+                    <View style={scheduleBadgeStyle}>
                       <Calendar size={12} color="#3b82f6" />
-                      <Text style={styles.scheduleText}>
+                      <Text style={scheduleTextStyle}>
                         {report.frequency}
                       </Text>
                     </View>
                   )}
                 </View>
-                <Text style={styles.reportDescription}>
+                <Text style={reportDescriptionStyle}>
                   {report.description}
                 </Text>
-                <Text style={styles.reportDate}>
+                <Text style={reportDateStyle}>
                   Created: {report.created}
                 </Text>
-                <View style={styles.reportActions}>
+                <View style={reportActionsStyle}>
                   <Button
                     title="View"
                     variant="primary"
                     onPress={() => handleViewReport(report.id)}
-                    style={styles.reportActionButton}
+                    style={reportActionButtonStyle}
                   />
                   <Button
                     title="Edit"
                     variant="outline"
                     onPress={() => console.log(`Editing report ${report.id}`)}
-                    style={styles.reportActionButton}
+                    style={reportActionButtonStyle}
                   />
                   <Button
                     title="Export"
                     variant="outline"
                     onPress={() => handleExportReport(report.id)}
-                    style={styles.reportActionButton}
+                    style={reportActionButtonStyle}
                   />
                 </View>
               </Card>
@@ -318,54 +658,54 @@ const CustomReports = () => {
         title="Create New Report"
         onClose={() => setShowCreateModal(false)}
       >
-        <View style={styles.modalContent}>
-          <View style={styles.formGroup}>
-            <Text style={styles.formLabel}>Report Name</Text>
+        <View style={modalContentStyle}>
+          <View style={formGroupStyle}>
+            <Text style={formLabelStyle}>Report Name</Text>
             <TextInput
-              style={styles.formInput}
+              style={formInputStyle}
               placeholder="Enter report name"
             />
           </View>
-          <View style={styles.formGroup}>
-            <Text style={styles.formLabel}>Description</Text>
+          <View style={formGroupStyle}>
+            <Text style={formLabelStyle}>Description</Text>
             <TextInput
-              style={[styles.formInput, styles.textArea]}
+              style={[formInputStyle, textAreaStyle]}
               placeholder="Enter report description"
               multiline
               numberOfLines={4}
             />
           </View>
-          <View style={styles.formGroup}>
-            <Text style={styles.formLabel}>Select Metrics</Text>
-            <View style={styles.metricOptions}>
+          <View style={formGroupStyle}>
+            <Text style={formLabelStyle}>Select Metrics</Text>
+            <View style={metricOptionsStyle}>
               {[
                 'Preventative Care Completion',
                 'Department Breakdown',
                 'ROI Analysis',
                 'Trend Comparison'
               ].map((metric, index) => (
-                <TouchableOpacity key={index} style={styles.metricOption}>
-                  <View style={styles.checkbox} />
-                  <Text style={styles.metricOptionText}>{metric}</Text>
+                <TouchableOpacity key={index} style={metricOptionStyle}>
+                  <View style={checkboxStyle} />
+                  <Text style={metricOptionTextStyle}>{metric}</Text>
                 </TouchableOpacity>
               ))}
             </View>
           </View>
-          <View style={styles.formGroup}>
-            <Text style={styles.formLabel}>Schedule Report</Text>
-            <View style={styles.scheduleOptions}>
+          <View style={formGroupStyle}>
+            <Text style={formLabelStyle}>Schedule Report</Text>
+            <View style={scheduleOptionsStyle}>
               {['One-time', 'Weekly', 'Monthly', 'Quarterly'].map((option) => (
                 <TouchableOpacity
                   key={option}
                   style={[
-                    styles.scheduleOption,
-                    selectedSchedule === option && styles.selectedScheduleOption
+                    scheduleOptionStyle,
+                    selectedSchedule === option && selectedScheduleOptionStyle
                   ]}
                   onPress={() => setSelectedSchedule(option)}
                 >
                   <Text style={[
-                    styles.scheduleOptionText,
-                    selectedSchedule === option && styles.selectedScheduleOptionText
+                    scheduleOptionTextStyle,
+                    selectedSchedule === option && selectedScheduleOptionTextStyle
                   ]}>
                     {option}
                   </Text>
@@ -373,18 +713,18 @@ const CustomReports = () => {
               ))}
             </View>
           </View>
-          <View style={styles.modalActions}>
+          <View style={modalActionsStyle}>
             <Button
               title="Cancel"
               variant="outline"
               onPress={() => setShowCreateModal(false)}
-              style={styles.modalButton}
+              style={modalButtonStyle}
             />
             <Button
               title="Create Report"
               variant="primary"
               onPress={handleSaveReport}
-              style={styles.modalButton}
+              style={modalButtonStyle}
             />
           </View>
         </View>
@@ -395,287 +735,4 @@ const CustomReports = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-  },
-  scrollContainer: {
-    flex: 1,
-    padding: 16,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  errorText: {
-    color: 'red',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  headerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 20,
-  },
-  headerText: {
-    flex: 1,
-  },
-  pageTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  pageSubtitle: {
-    fontSize: 14,
-    color: '#666',
-    marginTop: 4,
-  },
-  newReportButton: {
-    minWidth: 120,
-  },
-  tabContainer: {
-    flexDirection: 'row',
-    marginBottom: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
-  },
-  tabButton: {
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    marginRight: 8,
-  },
-  activeTabButton: {
-    borderBottomWidth: 2,
-    borderBottomColor: '#3b82f6',
-  },
-  tabText: {
-    fontSize: 16,
-    color: '#666',
-  },
-  activeTabText: {
-    fontWeight: 'bold',
-    color: '#3b82f6',
-  },
-  searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-    paddingHorizontal: 12,
-  },
-  searchInput: {
-    flex: 1,
-    padding: 8,
-    backgroundColor: '#fff',
-    borderRadius: 4,
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
-  },
-  filterContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: 12,
-    gap: 4,
-  },
-  filterText: {
-    fontSize: 14,
-    color: '#666',
-  },
-  templateCard: {
-    marginBottom: 16,
-    padding: 16,
-  },
-  templateHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  templateName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    flex: 1,
-  },
-  lastUpdatedContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  lastUpdatedText: {
-    fontSize: 12,
-    color: '#666',
-  },
-  templateDescription: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 12,
-  },
-  metricsContainer: {
-    marginBottom: 16,
-  },
-  metricsLabel: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    marginBottom: 8,
-    color: '#333',
-  },
-  metricsList: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  metricBadge: {
-    backgroundColor: '#e0f2fe',
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    borderRadius: 16,
-  },
-  metricText: {
-    fontSize: 12,
-    color: '#0284c7',
-  },
-  templateActions: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    gap: 8,
-  },
-  actionButton: {
-    minWidth: 100,
-  },
-  reportCard: {
-    marginBottom: 16,
-    padding: 16,
-  },
-  reportHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  reportName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    flex: 1,
-  },
-  scheduleBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#dbeafe',
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    borderRadius: 16,
-    gap: 4,
-  },
-  scheduleText: {
-    fontSize: 12,
-    color: '#3b82f6',
-  },
-  reportDescription: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 8,
-  },
-  reportDate: {
-    fontSize: 12,
-    color: '#666',
-    marginBottom: 12,
-  },
-  reportActions: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    gap: 8,
-  },
-  reportActionButton: {
-    minWidth: 80,
-  },
-  modalContent: {
-    padding: 16,
-  },
-  formGroup: {
-    marginBottom: 16,
-  },
-  formLabel: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    marginBottom: 8,
-    color: '#333',
-  },
-  formInput: {
-    padding: 12,
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
-    borderRadius: 4,
-    backgroundColor: '#fff',
-  },
-  textArea: {
-    height: 100,
-    textAlignVertical: 'top',
-  },
-  metricOptions: {
-    gap: 8,
-  },
-  metricOption: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 12,
-    backgroundColor: '#f9fafb',
-    borderRadius: 4,
-    borderWidth: 1,
-    borderColor: '#e5e7eb',
-  },
-  checkbox: {
-    width: 16,
-    height: 16,
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 2,
-    marginRight: 12,
-  },
-  metricOptionText: {
-    fontSize: 14,
-    color: '#374151',
-  },
-  scheduleOptions: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  scheduleOption: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-    borderRadius: 6,
-    backgroundColor: '#fff',
-  },
-  selectedScheduleOption: {
-    backgroundColor: '#3b82f6',
-    borderColor: '#3b82f6',
-  },
-  scheduleOptionText: {
-    fontSize: 14,
-    color: '#374151',
-  },
-  selectedScheduleOptionText: {
-    color: 'white',
-  },
-  modalActions: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    marginTop: 20,
-    gap: 8,
-  },
-  modalButton: {
-    minWidth: 120,
-  },
-});
+export default CustomReports;

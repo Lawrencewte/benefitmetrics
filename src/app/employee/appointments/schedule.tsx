@@ -108,7 +108,7 @@ export default function ScheduleAppointmentScreen() {
         ))}
       </View>
       
-      <ScrollView style={styles.content}>
+      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {currentStep === 1 && (
           <View style={styles.stepContainer}>
             <Text style={styles.stepTitle}>Select Appointment Type</Text>
@@ -120,6 +120,7 @@ export default function ScheduleAppointmentScreen() {
                   appointmentType === type.id && styles.selectedOption
                 ]}
                 onPress={() => setAppointmentType(type.id)}
+                activeOpacity={0.7}
               >
                 <View style={styles.optionIconContainer}>
                   {/* Using a general icon for simplicity */}
@@ -139,24 +140,55 @@ export default function ScheduleAppointmentScreen() {
             <Text style={styles.stepTitle}>Select Date</Text>
             <View style={styles.calendarContainer}>
               {/* Simplified calendar - would use a proper date picker in a real app */}
-              {nextDays.map((date) => (
+              {nextDays.map((date, index) => (
                 <TouchableOpacity
                   key={date.toISOString()}
                   style={[
                     styles.dateOption,
                     selectedDate && date.toDateString() === selectedDate.toDateString() && styles.selectedDate
                   ]}
-                  onPress={() => setSelectedDate(date)}
+                  onPress={() => {
+                    console.log('Date selected:', date); // Debug log
+                    setSelectedDate(date);
+                  }}
+                  activeOpacity={0.7}
                 >
-                  <Text style={styles.dateWeekday}>{date.toLocaleDateString('en-US', { weekday: 'short' })}</Text>
-                  <Text style={styles.dateDay}>{date.getDate()}</Text>
-                  <Text style={styles.dateMonth}>{date.toLocaleDateString('en-US', { month: 'short' })}</Text>
+                  <Text style={[
+                    styles.dateWeekday,
+                    selectedDate && date.toDateString() === selectedDate.toDateString() && styles.selectedDateText
+                  ]}>
+                    {date.toLocaleDateString('en-US', { weekday: 'short' })}
+                  </Text>
+                  <Text style={[
+                    styles.dateDay,
+                    selectedDate && date.toDateString() === selectedDate.toDateString() && styles.selectedDateText
+                  ]}>
+                    {date.getDate()}
+                  </Text>
+                  <Text style={[
+                    styles.dateMonth,
+                    selectedDate && date.toDateString() === selectedDate.toDateString() && styles.selectedDateText
+                  ]}>
+                    {date.toLocaleDateString('en-US', { month: 'short' })}
+                  </Text>
                 </TouchableOpacity>
               ))}
             </View>
             <Text style={styles.infoText}>
               Dates shown are based on recommended appointment availability and your calendar.
             </Text>
+            {selectedDate && (
+              <View style={styles.selectedDateInfo}>
+                <Text style={styles.selectedDateInfoText}>
+                  Selected: {selectedDate.toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                  })}
+                </Text>
+              </View>
+            )}
           </View>
         )}
         
@@ -174,6 +206,7 @@ export default function ScheduleAppointmentScreen() {
                   selectedProvider === provider.id && styles.selectedProvider
                 ]}
                 onPress={() => setSelectedProvider(provider.id)}
+                activeOpacity={0.7}
               >
                 <View style={styles.providerIconContainer}>
                   <User size={20} color="#4682B4" />
@@ -196,14 +229,16 @@ export default function ScheduleAppointmentScreen() {
                 <View style={styles.timeSlotContainer}>
                   {providers
                     .find(p => p.id === selectedProvider)
-                    ?.availability.map((time) => (
+                    ?.availability.map((time, index) => (
                       <TouchableOpacity
                         key={time}
                         style={[
                           styles.timeSlot,
-                          selectedTime === time && styles.selectedTimeSlot
+                          selectedTime === time && styles.selectedTimeSlot,
+                          { marginRight: index < providers.find(p => p.id === selectedProvider)?.availability.length - 1 ? 10 : 0 }
                         ]}
                         onPress={() => setSelectedTime(time)}
+                        activeOpacity={0.7}
                       >
                         <Clock size={14} color={selectedTime === time ? '#FFF' : '#4682B4'} />
                         <Text 
@@ -284,6 +319,7 @@ export default function ScheduleAppointmentScreen() {
                 placeholder="Add any notes or questions for your provider..."
                 value={notes}
                 onChangeText={setNotes}
+                placeholderTextColor="#999"
               />
             </View>
             
@@ -294,6 +330,9 @@ export default function ScheduleAppointmentScreen() {
             </View>
           </View>
         )}
+
+        {/* Bottom padding to prevent content being hidden behind footer */}
+        <View style={styles.bottomPadding} />
       </ScrollView>
       
       <View style={styles.actionContainer}>
@@ -304,6 +343,7 @@ export default function ScheduleAppointmentScreen() {
           ]}
           onPress={handleNext}
           disabled={!canProceed()}
+          activeOpacity={0.8}
         >
           <Text style={styles.actionButtonText}>
             {currentStep < 4 ? 'Continue' : 'Schedule Appointment'}
@@ -369,6 +409,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     marginBottom: 16,
+    color: '#333',
   },
   optionCard: {
     backgroundColor: '#FFF',
@@ -394,6 +435,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
     flex: 1,
+    color: '#333',
   },
   checkIcon: {
     marginLeft: 8,
@@ -414,7 +456,7 @@ const styles = StyleSheet.create({
   },
   selectedDate: {
     borderColor: '#4682B4',
-    backgroundColor: '#F0F7FF',
+    backgroundColor: '#4682B4',
   },
   dateWeekday: {
     fontSize: 10,
@@ -425,10 +467,26 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     marginBottom: 2,
+    color: '#333',
   },
   dateMonth: {
     fontSize: 10,
     color: '#666',
+  },
+  selectedDateText: {
+    color: '#FFF',
+  },
+  selectedDateInfo: {
+    backgroundColor: '#E6F0F9',
+    borderRadius: 8,
+    padding: 12,
+    marginTop: 12,
+  },
+  selectedDateInfoText: {
+    fontSize: 14,
+    color: '#4682B4',
+    fontWeight: '500',
+    textAlign: 'center',
   },
   infoText: {
     fontSize: 12,
@@ -472,6 +530,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     marginBottom: 2,
+    color: '#333',
   },
   providerSpecialty: {
     fontSize: 12,
@@ -480,7 +539,6 @@ const styles = StyleSheet.create({
   timeSlotContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 10,
     marginBottom: 16,
   },
   timeSlot: {
@@ -492,6 +550,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#E0E0E0',
+    marginBottom: 10,
   },
   selectedTimeSlot: {
     borderColor: '#4682B4',
@@ -518,6 +577,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginBottom: 16,
     textAlign: 'center',
+    color: '#333',
   },
   summaryRow: {
     flexDirection: 'row',
@@ -540,6 +600,7 @@ const styles = StyleSheet.create({
   summaryValue: {
     fontSize: 14,
     fontWeight: '500',
+    color: '#333',
   },
   notesContainer: {
     marginBottom: 16,
@@ -548,6 +609,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
     marginBottom: 8,
+    color: '#333',
   },
   notesInput: {
     backgroundColor: '#FFF',
@@ -557,6 +619,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#E0E0E0',
     textAlignVertical: 'top',
+    fontSize: 14,
+    color: '#333',
   },
   infoCard: {
     backgroundColor: '#E8F5E9',
@@ -569,6 +633,7 @@ const styles = StyleSheet.create({
   infoCardText: {
     fontSize: 12,
     color: '#2E7D32',
+    textAlign: 'center',
   },
   actionContainer: {
     padding: 16,
@@ -589,5 +654,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     color: '#FFF',
+  },
+  bottomPadding: {
+    height: 20,
   },
 });

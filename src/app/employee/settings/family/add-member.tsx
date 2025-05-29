@@ -1,9 +1,11 @@
+import Footer from '@/src/components/Common/layout/Footer';
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import Button from '../../../../components/Common/ui/Button';
 import { useFamilyMembers } from '../../../../hooks/employee/useFamilyMembers';
+
 
 interface FamilyMemberData {
   firstName: string;
@@ -203,6 +205,7 @@ export default function AddFamilyMember() {
           </View>
         </View>
       </ScrollView>
+      <Footer />
     </View>
   );
 }

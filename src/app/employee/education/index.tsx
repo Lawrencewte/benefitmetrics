@@ -112,7 +112,7 @@ export default function EducationResourcesScreen() {
 
   return (
     <View style={styles.container}>
-      <Header title="Education Resources" />
+      <Header title="Education Resources" showBackButton/>
       
       <View style={styles.searchContainer}>
         <View style={styles.searchBar}>

@@ -1,11 +1,12 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 interface ProgressBarProps {
-  progress: number; // from 0 to 1
+  progress: number; // from 0 to 100 (percentage) or 0 to 1 (decimal)
   height?: number;
   backgroundColor?: string;
   progressColor?: string;
+  color?: string; // Alternative prop name for progressColor
   showPercentage?: boolean;
   label?: string;
   style?: any;
@@ -14,79 +15,67 @@ interface ProgressBarProps {
 const ProgressBar: React.FC<ProgressBarProps> = ({
   progress,
   height = 8,
-  backgroundColor = '#F3F4F6', // gray-100
-  progressColor = '#2563EB', // blue-600
+  backgroundColor = '#F3F4F6',
+  progressColor,
+  color,
   showPercentage = false,
   label,
   style,
 }) => {
-  // Ensure progress is between 0 and 1
-  const normalizedProgress = Math.min(Math.max(progress, 0), 1);
-  const percentage = Math.round(normalizedProgress * 100);
+  // Use color prop if provided, otherwise use progressColor, with fallback
+  const finalProgressColor = color || progressColor || '#2563EB';
+  
+  // Handle both percentage (0-100) and decimal (0-1) inputs
+  const normalizedProgress = progress > 1 ? progress / 100 : progress;
+  const clampedProgress = Math.min(Math.max(normalizedProgress, 0), 1);
+  const percentage = Math.round(clampedProgress * 100);
 
-  const getProgressColor = () => {
-    // Optional: You could make color conditional based on progress value
-    return progressColor;
+  // Use inline styles instead of StyleSheet for web compatibility
+  const containerStyle = {
+    width: '100%',
+    overflow: 'hidden',
+    backgroundColor,
+    height,
+    borderRadius: height / 2,
+    position: 'relative' as const,
+    ...style,
+  };
+
+  const progressStyle = {
+    width: `${percentage}%`,
+    backgroundColor: finalProgressColor,
+    height,
+    borderRadius: height / 2,
+    position: 'absolute' as const,
+    left: 0,
+    top: 0,
+  };
+
+  const labelContainerStyle = {
+    flexDirection: 'row' as const,
+    justifyContent: 'space-between' as const,
+    marginBottom: 4,
+  };
+
+  const labelStyle = {
+    fontSize: 12,
+    color: '#6B7280',
+    fontWeight: '500' as const,
   };
 
   return (
     <View style={style}>
       {(label || showPercentage) && (
-        <View style={styles.labelContainer}>
-          {label && <Text style={styles.label}>{label}</Text>}
-          {showPercentage && <Text style={styles.percentage}>{percentage}%</Text>}
+        <View style={labelContainerStyle}>
+          {label && <Text style={labelStyle}>{label}</Text>}
+          {showPercentage && <Text style={labelStyle}>{percentage}%</Text>}
         </View>
       )}
-      <View
-        style={[
-          styles.container,
-          {
-            backgroundColor,
-            height,
-            borderRadius: height / 2,
-          },
-        ]}
-      >
-        <View
-          style={[
-            styles.progress,
-            {
-              width: `${percentage}%`,
-              backgroundColor: getProgressColor(),
-              height,
-              borderRadius: height / 2,
-            },
-          ]}
-        />
+      <View style={containerStyle}>
+        <View style={progressStyle} />
       </View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    overflow: 'hidden',
-  },
-  progress: {
-    position: 'absolute',
-    left: 0,
-  },
-  labelContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 4,
-  },
-  label: {
-    fontSize: 12,
-    color: '#6B7280', // gray-500
-    fontWeight: '500',
-  },
-  percentage: {
-    fontSize: 12,
-    color: '#6B7280', // gray-500
-    fontWeight: '500',
-  },
-});
 
 export default ProgressBar;

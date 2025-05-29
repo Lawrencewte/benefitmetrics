@@ -60,7 +60,7 @@ export default function BenefitsScreen() {
   
   return (
     <View style={styles.container}>
-      <Header title="Benefits" />
+      <Header title="Benefits" showBackButton />
       
       <ScrollView style={styles.content}>
         <View style={styles.card}>

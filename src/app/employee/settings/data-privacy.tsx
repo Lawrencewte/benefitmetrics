@@ -1,3 +1,4 @@
+import Footer from '@/src/components/Common/layout/Footer';
 import { Download, Eye, Lock, Shield, Trash2 } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
@@ -221,6 +222,7 @@ export default function DataPrivacySettings() {
           </Text>
         </View>
       </ScrollView>
+      <Footer />
     </View>
   );
 }

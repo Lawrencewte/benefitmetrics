@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { BarChart3, MessageSquare, Settings, Users } from 'lucide-react-native';
+import { BarChart3, LayoutDashboard, MessageSquare, Settings, Users } from 'lucide-react-native';
 import React from 'react';
 import { useColorScheme } from 'react-native';
 
@@ -43,7 +43,7 @@ export default function EmployerLayout() {
         options={{
           title: 'Dashboard',
           tabBarIcon: ({ color, size }) => (
-            <BarChart3 size={size} color={color} />
+            <LayoutDashboard size={size} color={color} />
           ),
           headerTitle: 'BenefitMetrics Admin',
         }}
@@ -61,7 +61,7 @@ export default function EmployerLayout() {
       />
       
       <Tabs.Screen
-        name="program"
+        name="programs"
         options={{
           title: 'Programs',
           tabBarIcon: ({ color, size }) => (
@@ -74,7 +74,7 @@ export default function EmployerLayout() {
       <Tabs.Screen
         name="communications"
         options={{
-          title: 'Communications',
+          title: 'Alerts',
           tabBarIcon: ({ color, size }) => (
             <MessageSquare size={size} color={color} />
           ),
